@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: 81f57f75957ef5e4ea251e2902274b6b
+  productGUID: 891c3168bed9ac94aa7b7470995cbfa8
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -770,10 +770,10 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
-  cloudProjectId: 36541973-7679-42b7-a554-0a97adf6110c
+  cloudProjectId: 85f2c744-806f-4ff8-95b6-2902820a6842
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Datura 2025-09-15_02-43-51
+  projectName: Datura
   organizationId: ghost-dusters
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
