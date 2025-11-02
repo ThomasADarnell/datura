@@ -14,8 +14,7 @@ GameObject:
   - component: {fileID: 4376669637969500326}
   - component: {fileID: 5604205450007549184}
   - component: {fileID: 1218288468839909032}
-  - component: {fileID: 5147545513457807351}
-  - component: {fileID: 811875957149027058}
+  - component: {fileID: 433785756619237477}
   m_Layer: 6
   m_Name: Main Guy
   m_TagString: Untagged
@@ -82,7 +81,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 7
-  m_Sprite: {fileID: 1833496436, guid: 797ad2ce22869494ab4474574a415e6c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 17d9129257f9b7e4ab1ed0dbc2efbaaf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -191,19 +190,7 @@ MonoBehaviour:
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1218288468839909032}
-        m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
-        m_MethodName: OnMove
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_ActionId: b930a5b3-1b33-4713-9ea5-b0857af97183
     m_ActionName: '2D/Move[/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
   - m_PersistentCalls:
@@ -219,19 +206,7 @@ MonoBehaviour:
     m_ActionId: d65f5f72-f611-403d-91cb-36d2567c3e65
     m_ActionName: '2D/Flashlight[/Keyboard/shift]'
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1218288468839909032}
-        m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
-        m_MethodName: OnUse
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_ActionId: f5c91234-5472-4f37-aa96-d6b8972f73be
     m_ActionName: '2D/Interact/Use[/Keyboard/f]'
   - m_PersistentCalls:
@@ -243,8 +218,8 @@ MonoBehaviour:
     m_ActionId: c4046718-c19b-402f-af4e-7644a9a31a33
     m_ActionName: '2D/Drop[/Keyboard/downArrow,/Keyboard/s]'
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: Keyboard&Mouse
-  m_DefaultActionMap: 2D
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: 3D
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!50 &4376669637969500326
@@ -255,7 +230,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6240096567394906780}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -312,7 +287,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.03125, y: 1.03125}
     newSize: {x: 1.03125, y: 1.03125}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -332,21 +307,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e9ebc4f3cb320a4c850125f1ef599c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2
---- !u!114 &5147545513457807351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6240096567394906780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 984027135e8e83145bce72186b6afdd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 4
---- !u!95 &811875957149027058
+  moveSpeed: 5
+--- !u!95 &433785756619237477
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
@@ -356,7 +318,7 @@ Animator:
   m_GameObject: {fileID: 6240096567394906780}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 163319333dd50714589712af3e360f75, type: 2}
+  m_Controller: {fileID: 9100000, guid: a23b3f4c99fe02c4da42a8061de8e5bf, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

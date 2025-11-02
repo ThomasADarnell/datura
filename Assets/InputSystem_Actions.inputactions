@@ -882,50 +882,6 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "Up",
-                    "id": "7b51f6ca-eb58-471c-be18-dfe9f33dcb2a",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "Up",
-                    "id": "b4c958c4-15f4-4c2a-b2a8-52b234eaef94",
-                    "path": "<Keyboard>/upArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "Down",
-                    "id": "bbcb2f50-53ab-49a6-949c-73cf34d64190",
-                    "path": "<Keyboard>/s",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "Down",
-                    "id": "10d46935-42be-460d-ab93-b8a1bdcb313a",
-                    "path": "<Keyboard>/downArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
                     "name": "",
                     "id": "1890813b-cd58-4e27-84ea-602af41cc346",
                     "path": "<Keyboard>/e",
