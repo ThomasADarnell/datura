@@ -18,4 +18,8 @@ public class LevelManager : MonoBehaviour
     {
         SceneManager.LoadScene("Lvl1");
     }
+    public void LevelTwo()
+    {
+        SceneManager.LoadScene("Lvl2");
+    }
 }
