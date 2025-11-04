@@ -3,7 +3,10 @@ using UnityEngine.InputSystem;
 
 public class Movement : MonoBehaviour
 {
+    volatile int state;
     private Vector2 movementInput;
+    public float cooldownTime = 1.0f;
+    private float nextActionTime = 0.0f;
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -13,6 +16,12 @@ public class Movement : MonoBehaviour
     public void OnUse(InputAction.CallbackContext context)
     {
         Debug.Log("use the item www");
+        if (Time.time > nextActionTime)
+        {
+            // Perform the action
+            Debug.Log("Action performed!");
+            nextActionTime = Time.time + cooldownTime; // Set the next available time for the action
+        }
     }
 
     public void OnFlashlight(InputAction.CallbackContext context)
@@ -33,7 +42,7 @@ public class Movement : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        state = 0;
     }
 
     // Update is called once per frame

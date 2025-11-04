@@ -10,6 +10,11 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 lastMoveDir = Vector2.down;
     private Health health;
 
+    volatile public int state = 0;
+    volatile public bool cooldown = true;
+    public float cooldownTime = 1.0f;
+    private float nextActionTime = 0.0f;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -29,6 +34,18 @@ public class PlayerMovement : MonoBehaviour
     {
         Debug.Log("use the item www");
         // health.TakeDamage(1); debug
+        if(!cooldown){
+            cooldown = true;
+            state = 1;
+            Invoke("MyDelayedFunction", 8.0f);
+            state = 0;
+            Invoke("MyDelayedFunction", 1.0f);
+            cooldown = false;
+        }
+    }
+    void MyDelayedFunction()
+    {
+        Debug.Log("Function called after delay using Invoke!");
     }
 
     void FixedUpdate()
