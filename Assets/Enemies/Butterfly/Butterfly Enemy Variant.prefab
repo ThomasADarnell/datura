@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 86646364836790149, guid: af2dc178b0ebe3c4497b202ff988224a, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1738961922842923783, guid: af2dc178b0ebe3c4497b202ff988224a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -50,7 +54,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5799986589096058647, guid: af2dc178b0ebe3c4497b202ff988224a, type: 3}
       propertyPath: m_Name
-      value: Butterfly Enemy
+      value: Butterfly Enemy Variant
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

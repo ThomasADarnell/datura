@@ -16,7 +16,7 @@ public class PlayerHealth : MonoBehaviour
         get
         {
             if (instance == null)
-                instance = FindObjectOfType<PlayerHealth>();
+                instance = FindFirstObjectByType<PlayerHealth>();
             return instance;
         }
     }
