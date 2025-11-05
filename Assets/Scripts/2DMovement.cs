@@ -10,10 +10,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 lastMoveDir = Vector2.down;
     private Health health;
 
-    volatile public int state = 0;
-    volatile public bool cooldown = true;
-    public float cooldownTime = 1.0f;
-    private float nextActionTime = 0.0f;
+    public GameObject ExplosionEffectPrefab;
 
     void Awake()
     {
@@ -32,20 +29,16 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnUse(InputAction.CallbackContext context)
     {
-        Debug.Log("use the item www");
-        // health.TakeDamage(1); debug
-        if(!cooldown){
-            cooldown = true;
-            state = 1;
-            Invoke("MyDelayedFunction", 8.0f);
-            state = 0;
-            Invoke("MyDelayedFunction", 1.0f);
-            cooldown = false;
+        NaturalCombinedEnemyBehavior[] butterflies = FindObjectsByType<NaturalCombinedEnemyBehavior>(FindObjectsSortMode.None);
+
+        foreach (NaturalCombinedEnemyBehavior butterfly in butterflies)
+        {
+            if (Vector2.Distance(this.transform.position, butterfly.transform.position) < 2.0f)
+            {
+                if (this.ExplosionEffectPrefab) Instantiate(this.ExplosionEffectPrefab, this.transform.position, Quaternion.identity);
+                Destroy(butterfly.gameObject);
+            }
         }
-    }
-    void MyDelayedFunction()
-    {
-        Debug.Log("Function called after delay using Invoke!");
     }
 
     void FixedUpdate()

@@ -43,8 +43,12 @@ public class NaturalCombinedEnemyBehavior : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
-        {
-            Debug.Log("Contact with the player");
+        { // When player runs into the shrub
+            PlayerHealth playerHealth = collision.GetComponent<PlayerHealth>();  // get player health
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(1);  // apply damage
+            }
         }
     }
 
