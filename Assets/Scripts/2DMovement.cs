@@ -11,7 +11,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 lastMoveDir = Vector2.down;
     private Health health;
     private FacingDirection direction;
-    private float distanceToAttack = 5.0f; //How close you need to be to do damage
+    public float distanceToAttack = 5.0f; //How close you need to be to do damage
 
     private enum FacingDirection
     {
@@ -65,7 +65,11 @@ public class PlayerMovement : MonoBehaviour
                 float angleDiff = Mathf.Abs(Mathf.DeltaAngle((float)facingAngle, (float)projection));
                 if (angleDiff <= 45f)
                 {
-                    if (this.ExplosionEffectPrefab) Instantiate(this.ExplosionEffectPrefab, this.transform.position, Quaternion.identity);
+                    if (this.ExplosionEffectPrefab)
+                    {
+                        GameObject effect = Instantiate(this.ExplosionEffectPrefab, butterfly.transform.position, Quaternion.identity);
+                        Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
+                    }
                     Destroy(butterfly.gameObject);
                 }
                 else
