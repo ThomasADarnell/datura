@@ -10,7 +10,6 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 moveInput;
     private Vector2 lastMoveDir = Vector2.down;
     private Health health;
-    private FacingDirection direction;
     public float distanceToAttack = 5.0f; //How close you need to be to do damage
 
     private enum FacingDirection
