@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using UnityEngine.UI;
 
 public class BossController : MonoBehaviour
 {
@@ -9,9 +11,17 @@ public class BossController : MonoBehaviour
     public int maxDoubleSeeds = 3; // Limit for spawning 2 seeds
     public Collider2D spawnArea; // Use a BoxCollider2D or similar to define the room bounds
 
+    [Header("UI References (Set in Editor)")]
+    // **NOTE: You must add a 'using TMPro;' and 'using UnityEngine.UI;' at the top**
+    public GameObject healthUIGroup; // The parent group to show/hide the UI
+    public Slider healthSlider;
+    public TextMeshProUGUI healthText;
+
+
     [Header("Current Fight State")]
     public int doubleSeedCounter = 0;
     private List<FlowerBoss> activeFlowers = new List<FlowerBoss>();
+    private bool hasFightStarted = false;
 
     void Start()
     {
@@ -22,11 +32,23 @@ public class BossController : MonoBehaviour
             return;
         }
 
-        // Start the fight with one initial seed
-        SpawnNewSeed(GetRandomSpawnPosition());
     }
 
     // --- Spawning and Seeding ---
+    public void StartBossFight()
+    {
+        if (hasFightStarted)
+        {
+            // Fight already running, do nothing.
+            return;
+        }
+
+        hasFightStarted = true;
+        Debug.Log("Player entered the boss room. Starting Flower Boss fight!");
+
+        // Start the fight with one initial seed
+        SpawnNewSeed(GetRandomSpawnPosition());
+    }
 
     public void HandleSeeding(Vector3 explodedPosition)
     {
@@ -58,6 +80,15 @@ public class BossController : MonoBehaviour
         // Setup the new flower instance
         newFlower.bossController = this;
         activeFlowers.Add(newFlower);
+
+        // NEW: Subscribe to the health event of the newly spawned flower
+        newFlower.OnHealthChanged += UpdateHealthUI;
+
+        // NEW: Show the UI when the first flower spawns
+        if (healthUIGroup != null)
+        {
+            healthUIGroup.SetActive(true);
+        }
     }
 
     private Vector3 GetRandomSpawnPosition()
@@ -73,17 +104,46 @@ public class BossController : MonoBehaviour
 
     public void FlowerDefeated(FlowerBoss flower)
     {
+        flower.OnHealthChanged -= UpdateHealthUI;
+
         activeFlowers.Remove(flower);
 
         if (activeFlowers.Count == 0)
         {
             EndBossFight();
         }
+        else
+        {
+            // If another flower exists, update UI with its current health
+            UpdateHealthUI(activeFlowers[0].maxHealth, activeFlowers[0].maxHealth); // Reset to full health for the next flower phase
+        }
+    }
+
+    public void UpdateHealthUI(int current, int max)
+    {
+        if (healthSlider != null)
+        {
+            healthSlider.maxValue = max;
+            healthSlider.value = current;
+        }
+
+        if (healthText != null)
+        {
+            // Example: "Boss Health: 5/10"
+            healthText.text = $"Flower Health: {current} / {max}";
+        }
+
+        // Since the fight involves multiple flower instances, we assume the UI shows the health 
+        // of the *currently active* flower the player is hitting.
     }
 
     private void EndBossFight()
     {
         Debug.Log("BOSS DEFEATED! All flowers are gone.");
+        if (healthUIGroup != null)
+        {
+            healthUIGroup.SetActive(false);
+        }
         SpawnTreasureChest();
     }
 

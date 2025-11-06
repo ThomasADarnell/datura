@@ -1,8 +1,11 @@
 using UnityEngine;
-using System.Collections; // Required for Coroutines
+using System.Collections;
+using System;
 
 public class FlowerBoss : MonoBehaviour
 {
+    public event Action<int, int> OnHealthChanged;
+
     // --- Public Parameters ---
     [Header("Core Stats")]
     public int maxHealth = 10;
@@ -41,6 +44,9 @@ public class FlowerBoss : MonoBehaviour
             enabled = false;
             return;
         }
+
+        // Update the health bar
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         // Start the growth cycle
         StartCoroutine(GrowthCycle());
@@ -114,11 +120,13 @@ public class FlowerBoss : MonoBehaviour
         {
             // --- Take Damage (Success) ---
             currentHealth -= damage;
+
+            OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
             if (currentHealth <= 0)
             {
                 DefeatFlower();
             }
-            // Optional: Add visual feedback for damage taken (e.g., flash white)
         }
         else if (!isInvulnerable) // Safety check, should be true for non-Flower stages
         {
