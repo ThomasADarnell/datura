@@ -10,12 +10,14 @@ public class NaturalCombinedEnemyBehavior : MonoBehaviour
     public float stoppingDistance = 1.5f; // Distance from target where slow-down begins
     public Transform pointA;
     public Transform pointB;
+    public float damageCooldown = 2f;
 
     // --- Private Variables ---
     private Vector3 target;
     private GameObject player;
     private float currentSpeed = 0f; // New: Tracks the speed in the current frame
     private Vector3 moveDirection; // Tracks the desired movement direction
+    private float nextDamageTime = 0f;
 
     // --- Initialization ---
     void Start()
@@ -42,13 +44,14 @@ public class NaturalCombinedEnemyBehavior : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") && Time.time >= nextDamageTime)
         { // When player runs into the shrub
             PlayerHealth playerHealth = collision.GetComponent<PlayerHealth>();  // get player health
             if (playerHealth != null)
             {
                 playerHealth.TakeDamage(1);  // apply damage
             }
+            nextDamageTime = Time.time + damageCooldown;
         }
     }
 
