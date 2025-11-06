@@ -12,8 +12,8 @@ public class FlowerBoss : MonoBehaviour
     public float stageDuration = 3.0f; // Time spent in Seed, Sprout, and Budding stages
     public float flowerStageDuration = 2.0f; // Time before explosion in Flower stage
     public float explosionWarningTime = 0.5f; // Time for flashing color before explosion
-    public float explosionRadius = 7.0f;
-    public int playerDamage = 1; // Damage dealt to player on explosion
+    public float explosionRadius = 1.0f;
+    public int playerDamage = 1; // Damage from explosion
 
     // --- References ---
     [Header("Dependencies")]
