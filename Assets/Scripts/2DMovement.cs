@@ -29,9 +29,9 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnUse(InputAction.CallbackContext context)
     {
-        NaturalCombinedEnemyBehavior[] butterflies = FindObjectsByType<NaturalCombinedEnemyBehavior>(FindObjectsSortMode.None);
+        ButterflyBehavior[] butterflies = FindObjectsByType<ButterflyBehavior>(FindObjectsSortMode.None);
 
-        foreach (NaturalCombinedEnemyBehavior butterfly in butterflies)
+        foreach (ButterflyBehavior butterfly in butterflies)
         {
             if (Vector2.Distance(this.transform.position, butterfly.transform.position) < 2.0f)
             {
