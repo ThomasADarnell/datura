@@ -45,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnUse(InputAction.CallbackContext context)
     {
-        NaturalCombinedEnemyBehavior[] butterflies = FindObjectsByType<NaturalCombinedEnemyBehavior>(FindObjectsSortMode.None);
+        ButterflyBehavior[] butterflies = FindObjectsByType<ButterflyBehavior>(FindObjectsSortMode.None);
 
             float lx = anim.GetFloat("LastX");
             float ly = anim.GetFloat("LastY");
@@ -55,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
             else if (ly > 0.5f) facingAngle = 90f;  // up
             else facingAngle = 270f;               // down
 
-            foreach (NaturalCombinedEnemyBehavior butterfly in butterflies)
+            foreach (ButterflyBehavior butterfly in butterflies)
             {
                 float dist = Vector2.Distance(this.transform.position, butterfly.transform.position);
                 if (dist > distanceToAttack) continue;
