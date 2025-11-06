@@ -193,9 +193,13 @@ public class FlowerBoss : MonoBehaviour
             float distance = Vector2.Distance(transform.position, player.transform.position);
             if (distance <= explosionRadius)
             {
-                // In a real game, this would call a player 'TakeDamage' function.
-                Debug.Log($"Player hit by explosion! Takes {playerDamage} damage.");
-                // player.GetComponent<PlayerHealth>().TakeDamage(playerDamage); 
+                PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+
+                if (playerHealth != null)
+                {
+                    playerHealth.TakeDamage(1);  // apply damage
+                }
+            
             }
         }
     }
