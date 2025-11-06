@@ -1192,7 +1192,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 152473914752341655}
-  - component: {fileID: 4832737683845710892}
+  - component: {fileID: 5517681276405012523}
   m_Layer: 0
   m_Name: PlayerHealthController
   m_TagString: Untagged
@@ -1215,7 +1215,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1467509758526137578}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4832737683845710892
+--- !u!114 &5517681276405012523
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1226,7 +1226,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4821cf82c80747b40828f5289b51ba1c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealthControl
+  m_EditorClassIdentifier: 
   heartsParent: {fileID: 7836502656416487144}
   heartContainerPrefab: {fileID: 1000013667988280, guid: 677e3f20f0ab76a45bd59d5b73b0b446, type: 3}
 --- !u!1 &6164572626531154904
