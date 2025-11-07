@@ -82,12 +82,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 904af91713bdee542b93c519973eca9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
   stageDuration: 3
   flowerStageDuration: 2
   explosionWarningTime: 0.5
   explosionRadius: 1
   playerDamage: 1
+  ExplosionEffectPrefab: {fileID: 6445666186361868711, guid: 9deea548c44c9ac4e94d6932a0d85eaf, type: 3}
   spriteRenderer: {fileID: 1297836410725911053}
   seedSprite: {fileID: -1049684223, guid: 80bcaa9561dde3f40a1d998bc95241c8, type: 3}
   sproutSprite: {fileID: 641243309, guid: 80bcaa9561dde3f40a1d998bc95241c8, type: 3}
