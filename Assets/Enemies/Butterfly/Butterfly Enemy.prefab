@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8291917674632195456}
   - component: {fileID: 7996337511103926100}
   - component: {fileID: 7440370797081619912}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Butterfly Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130,14 +130,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89e0dcade2549ab4da99b8358a2b40bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 5
-  accelerationRate: 3
-  decelerationRate: 3
-  stoppingDistance: 3
+  maxSpeed: 3
+  accelerationRate: 2.5
+  decelerationRate: 2
+  stoppingDistance: 6
   damageCooldown: 2
   chaseRange: 5
-  pointA: {fileID: 0}
-  pointB: {fileID: 0}
+  walkableAreaTilemap: {fileID: 0}
 --- !u!60 &7996337511103926100
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -226,7 +225,7 @@ BoxCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 4160
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2

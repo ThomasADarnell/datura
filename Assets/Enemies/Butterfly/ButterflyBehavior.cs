@@ -18,7 +18,7 @@ public class ButterflyBehavior : EnemyBaseBehavior
     private float stuckTime = 0f;
     private bool isChasing = false;
     private const float STUCK_THRESHOLD = 1.5f; // Time in seconds before considering stuck
-    private const float MOVEMENT_THRESHOLD = 0.1f; // Distance that must be moved to not be considered stuck
+    private const float MOVEMENT_THRESHOLD = 0.05f; // Distance that must be moved to not be considered stuck
 
 
 
@@ -72,10 +72,12 @@ public class ButterflyBehavior : EnemyBaseBehavior
         // Prioritize Chase state
         if (player != null && Vector2.Distance(transform.position, player.transform.position) < chaseRange)
         {
+            isChasing = true;
             ChasePlayer();
         }
         else
         {
+            isChasing = false;
             Patrol();
         }
     }
@@ -212,7 +214,7 @@ public class ButterflyBehavior : EnemyBaseBehavior
 
         if (tileRects.Count == 0)
         {
-            Debug.LogWarning("No walkable tiles found!");
+            // Debug.LogWarning("No walkable tiles found!");
             return currentPos;
         }
 
@@ -222,9 +224,13 @@ public class ButterflyBehavior : EnemyBaseBehavior
         float ry = Random.Range(rect.yMin, rect.yMax);
         Vector2 randomPoint = new Vector2(rx, ry);
         
-        while(Vector2.Distance(currentPos, randomPoint) !<= walkableRange)
+        int attempts = 0;
+        while(Vector2.Distance(currentPos, randomPoint) > walkableRange && attempts < 100)
         {
-            int ri = Random.Range(1, tileRects.Count-1);
+            attempts++;
+            if (tileRects.Count <= 1) break;
+            
+            int ri = Random.Range(0, tileRects.Count);
             var rec = tileRects[ri];
             rx = Random.Range(rec.xMin, rec.xMax);
             ry = Random.Range(rec.yMin, rec.yMax);
@@ -233,34 +239,34 @@ public class ButterflyBehavior : EnemyBaseBehavior
 
         return randomPoint;
     }
-    private void OnDrawGizmos()
-    {
-        if (currentPath != null && currentPath.Count > 0)
-        {
-            // Draw all path points as yellow solid spheres
-            Gizmos.color = Color.yellow;
-            foreach (var point in currentPath)
-            {
-                Vector3 pos = new Vector3(point.x, point.y, 5);
-                Gizmos.DrawSphere(pos, 0.1f);
-            }
+    // private void OnDrawGizmos()
+    // {
+    //     if (currentPath != null && currentPath.Count > 0)
+    //     {
+    //         // Draw all path points as yellow solid spheres
+    //         Gizmos.color = Color.yellow;
+    //         foreach (var point in currentPath)
+    //         {
+    //             Vector3 pos = new Vector3(point.x, point.y, 5);
+    //             Gizmos.DrawSphere(pos, 0.1f);
+    //         }
             
-            // Draw current target node as a larger red sphere
-            if (currentPathIndex < currentPath.Count)
-            {
-                Gizmos.color = Color.red;
-                Vector3 currentTarget = new Vector3(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y, 5);
-                Gizmos.DrawSphere(currentTarget, 0.15f);
-            }
+    //         // Draw current target node as a larger red sphere
+    //         if (currentPathIndex < currentPath.Count)
+    //         {
+    //             Gizmos.color = Color.red;
+    //             Vector3 currentTarget = new Vector3(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y, 5);
+    //             Gizmos.DrawSphere(currentTarget, 0.15f);
+    //         }
 
-            // Draw ultimate target point in blue
-            Gizmos.color = Color.blue;
-            Vector3 finalTarget = new Vector3(target.x, target.y, 5);
-            Gizmos.DrawSphere(finalTarget, 0.2f);
-        }
+    //         // Draw ultimate target point in blue
+    //         Gizmos.color = Color.blue;
+    //         Vector3 finalTarget = new Vector3(target.x, target.y, 5);
+    //         Gizmos.DrawSphere(finalTarget, 0.2f);
+    //     }
 
-        // Always draw current position and target
-        Gizmos.color = Color.green;
-        Gizmos.DrawSphere(transform.position, 0.15f);
-    }
+    //     // Always draw current position and target
+    //     Gizmos.color = Color.green;
+    //     Gizmos.DrawSphere(transform.position, 0.15f);
+    // }
 }
