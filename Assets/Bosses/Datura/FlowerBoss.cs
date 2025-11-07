@@ -8,12 +8,12 @@ public class FlowerBoss : MonoBehaviour
 
     // --- Public Parameters ---
     [Header("Core Stats")]
+    public int maxHealth = 10;
     public float stageDuration = 3.0f; // Time spent in Seed, Sprout, and Budding stages
     public float flowerStageDuration = 2.0f; // Time before explosion in Flower stage
     public float explosionWarningTime = 0.5f; // Time for flashing color before explosion
-    public float explosionRadius = 3.0f;
+    public float explosionRadius = 1.0f;
     public int playerDamage = 1; // Damage from explosion
-    public GameObject ExplosionEffectPrefab;
 
     // --- References ---
     [Header("Dependencies")]
@@ -26,6 +26,7 @@ public class FlowerBoss : MonoBehaviour
     public BossController bossController; // Reference to the main fight manager
 
     // --- Private State ---
+    private int currentHealth;
     private enum BossStage { Seed, Sprout, BuddingStem, Flower }
     private BossStage currentStage = BossStage.Seed;
     private Color originalColor;
@@ -33,6 +34,7 @@ public class FlowerBoss : MonoBehaviour
 
     void Start()
     {
+        currentHealth = maxHealth;
         originalColor = spriteRenderer.color;
 
         // Ensure we have a reference to the main controller
@@ -44,7 +46,7 @@ public class FlowerBoss : MonoBehaviour
         }
 
         // Update the health bar
-        OnHealthChanged?.Invoke(bossController.currentHealth, bossController.maxHealth);
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         // Start the growth cycle
         StartCoroutine(GrowthCycle());
@@ -117,11 +119,11 @@ public class FlowerBoss : MonoBehaviour
         if (currentStage == BossStage.Flower)
         {
             // --- Take Damage (Success) ---
-            bossController.currentHealth -= damage;
+            currentHealth -= damage;
 
-            OnHealthChanged?.Invoke(bossController.currentHealth, bossController.maxHealth);
+            OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
-            if (bossController.currentHealth <= 0)
+            if (currentHealth <= 0)
             {
                 DefeatFlower();
             }
@@ -134,7 +136,6 @@ public class FlowerBoss : MonoBehaviour
             StopAllCoroutines();
             StartCoroutine(GrowthCycle());
         }
-
     }
 
     private void RevertToPreviousStage()
@@ -170,12 +171,6 @@ public class FlowerBoss : MonoBehaviour
     private void ExplodeAndSeed()
     {
         Debug.Log("Flower Exploded! Seeding...");
-
-        if (this.ExplosionEffectPrefab)
-        {
-            GameObject effect = Instantiate(this.ExplosionEffectPrefab, this.transform.position, Quaternion.identity);
-            Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
-        }
 
         // 1. Damage Player (if in radius)
         DealExplosionDamage();

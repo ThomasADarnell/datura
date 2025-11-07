@@ -3,20 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine.UI;
-using UnityEditor.SearchService;
-using UnityEngine.SceneManagement;
-
 
 public class BossController : MonoBehaviour
 {
     [Header("Boss Prefab and Spawn Area")]
     public GameObject flowerPrefab;
-    public int maxDoubleSeeds = 7; // Limit for spawning 2 seeds
+    public int maxDoubleSeeds = 3; // Limit for spawning 2 seeds
     public Collider2D spawnArea; // Use a BoxCollider2D or similar to define the room bounds
-    public int currentHealth;
-    public int maxHealth = 10;
-
-
 
     [Header("UI References (Set in Editor)")]
     // **NOTE: You must add a 'using TMPro;' and 'using UnityEngine.UI;' at the top**
@@ -32,14 +25,12 @@ public class BossController : MonoBehaviour
 
     void Start()
     {
-        currentHealth = maxHealth;
         if (spawnArea == null)
         {
             Debug.LogError("Spawn Area Collider2D is not set on BossController!");
             enabled = false;
             return;
         }
-        maxDoubleSeeds = 7;
 
     }
 
@@ -61,26 +52,22 @@ public class BossController : MonoBehaviour
 
     public void HandleSeeding(Vector3 explodedPosition)
     {
-        Debug.Log(currentHealth);
-        if (currentHealth > 0)
+        int seedsToSpawn = 1;
+
+        if (doubleSeedCounter < maxDoubleSeeds)
         {
-            int seedsToSpawn = 1;
+            seedsToSpawn = 2;
+            doubleSeedCounter++;
+            Debug.Log($"Double Seed Cycle used: {doubleSeedCounter}/{maxDoubleSeeds}");
+        }
+        else
+        {
+            Debug.Log("Double Seed Limit reached. Spawning one seed.");
+        }
 
-            if (doubleSeedCounter < maxDoubleSeeds)
-            {
-                seedsToSpawn = 2;
-                doubleSeedCounter++;
-                Debug.Log($"Double Seed Cycle used: {doubleSeedCounter}/{maxDoubleSeeds}");
-            }
-            else
-            {
-                Debug.Log("Double Seed Limit reached. Spawning one seed.");
-            }
-
-            for (int i = 0; i < seedsToSpawn; i++)
-            {
-                SpawnNewSeed(GetRandomSpawnPosition());
-            }
+        for (int i = 0; i < seedsToSpawn; i++)
+        {
+            SpawnNewSeed(GetRandomSpawnPosition());
         }
     }
 
@@ -121,14 +108,14 @@ public class BossController : MonoBehaviour
 
         activeFlowers.Remove(flower);
 
-        if (activeFlowers.Count == 0 || currentHealth <= 0)
+        if (activeFlowers.Count == 0)
         {
             EndBossFight();
         }
         else
         {
             // If another flower exists, update UI with its current health
-            UpdateHealthUI(activeFlowers[0].bossController.currentHealth, activeFlowers[0].bossController.maxHealth); // Reset to full health for the next flower phase
+            UpdateHealthUI(activeFlowers[0].maxHealth, activeFlowers[0].maxHealth); // Reset to full health for the next flower phase
         }
     }
 
@@ -163,7 +150,7 @@ public class BossController : MonoBehaviour
     private void SpawnTreasureChest()
     {
         // Logic to instantiate the treasure chest prefab (e.g., at the center of the room)
-        SceneManager.LoadScene("Level Select");
+        Debug.Log("--- TREASURE CHEST SPAWNED ---");
         // Example: Instantiate(treasureChestPrefab, transform.position, Quaternion.identity);
     }
 }
