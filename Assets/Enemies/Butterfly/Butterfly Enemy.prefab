@@ -113,7 +113,7 @@ Rigidbody2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -131,10 +131,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 5
-  chaseRange: 5
   accelerationRate: 3
   decelerationRate: 3
   stoppingDistance: 3
+  damageCooldown: 2
+  chaseRange: 5
   pointA: {fileID: 0}
   pointB: {fileID: 0}
 --- !u!60 &7996337511103926100
