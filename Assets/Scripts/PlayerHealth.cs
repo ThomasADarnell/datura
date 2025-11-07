@@ -3,6 +3,7 @@
  */
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -46,7 +47,7 @@ public class PlayerHealth : MonoBehaviour
     }
 
     public void AddHealth()
-    {
+    { 
         if (maxHealth < maxTotalHealth)
         {
             maxHealth += 1;
@@ -63,5 +64,10 @@ public class PlayerHealth : MonoBehaviour
 
         if (onHealthChangedCallback != null)
             onHealthChangedCallback.Invoke();
+        Debug.Log(health);
+        if (health <= 0)
+        {
+            SceneManager.LoadScene("Kill Screen");
+        }
     }
 }

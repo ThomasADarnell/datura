@@ -32,7 +32,9 @@ public class Health : MonoBehaviour
         PlayerData.Instance.currentHealth = currentHealth;  // update global
 
         heartDisplay.UpdateHearts(currentHealth, maxHealth);
-        if (currentHealth <= 0) Die();
+        if (currentHealth <= 0) {
+            SceneManager.LoadScene("Death");
+        }
     }
 
     public void Heal(int amount)
@@ -46,6 +48,6 @@ public class Health : MonoBehaviour
     void Die()
     {
         // maybe respawn or reload scene later
-        SceneManager.LoadScene("Death");
+        
     }
 }
