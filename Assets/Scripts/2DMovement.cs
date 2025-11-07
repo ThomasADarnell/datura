@@ -5,10 +5,13 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 5f;
+    private float attackTimer = 0f;
+    public float attackDuration = 0.25f;
     private Rigidbody2D rb;
     private Animator anim;
     private Vector2 moveInput;
     private Vector2 lastMoveDir = Vector2.down;
+    private bool isAttacking = false;
     private Health health;
     public float distanceToAttack = 1f; //How close you need to be to do damage
 
@@ -45,37 +48,39 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnUse(InputAction.CallbackContext context)
     {
+        isAttacking = true;
+        attackTimer = attackDuration;
         ButterflyBehavior[] butterflies = FindObjectsByType<ButterflyBehavior>(FindObjectsSortMode.None);
 
-            float lx = anim.GetFloat("LastX");
-            float ly = anim.GetFloat("LastY");
-            float facingAngle;
-            if (lx > 0.5f) facingAngle = 0f;        // right
-            else if (lx < -0.5f) facingAngle = 180f; // left
-            else if (ly > 0.5f) facingAngle = 90f;  // up
-            else facingAngle = 270f;               // down
+        float lx = anim.GetFloat("LastX");
+        float ly = anim.GetFloat("LastY");
+        float facingAngle;
+        if (lx > 0.5f) facingAngle = 0f;        // right
+        else if (lx < -0.5f) facingAngle = 180f; // left
+        else if (ly > 0.5f) facingAngle = 90f;  // up
+        else facingAngle = 270f;               // down
 
-            foreach (ButterflyBehavior butterfly in butterflies)
+        foreach (ButterflyBehavior butterfly in butterflies)
+        {
+            float dist = Vector2.Distance(this.transform.position, butterfly.transform.position);
+            if (dist > distanceToAttack) continue;
+
+            double projection = CheckProjection(this.transform.position, butterfly.transform.position);
+            float angleDiff = Mathf.Abs(Mathf.DeltaAngle((float)facingAngle, (float)projection));
+            if (angleDiff <= 45f)
             {
-                float dist = Vector2.Distance(this.transform.position, butterfly.transform.position);
-                if (dist > distanceToAttack) continue;
-
-                double projection = CheckProjection(this.transform.position, butterfly.transform.position);
-                float angleDiff = Mathf.Abs(Mathf.DeltaAngle((float)facingAngle, (float)projection));
-                if (angleDiff <= 45f)
+                if (this.ExplosionEffectPrefab)
                 {
-                    if (this.ExplosionEffectPrefab)
-                    {
-                        GameObject effect = Instantiate(this.ExplosionEffectPrefab, butterfly.transform.position, Quaternion.identity);
-                        Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
-                    }
-                    Destroy(butterfly.gameObject);
+                    GameObject effect = Instantiate(this.ExplosionEffectPrefab, butterfly.transform.position, Quaternion.identity);
+                    Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
                 }
-                else
-                {
-                    Debug.Log("Not facing target; angleDiff=" + angleDiff);
-                }
+                Destroy(butterfly.gameObject);
             }
+            else
+            {
+                Debug.Log("Not facing target; angleDiff=" + angleDiff);
+            }
+        }
         FlowerBoss[] flowers = FindObjectsByType<FlowerBoss>(FindObjectsSortMode.None);
 
         if (lx > 0.5f) facingAngle = 0f;        // right
@@ -108,6 +113,17 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (attackTimer > 0)
+        {
+            attackTimer -= Time.fixedDeltaTime;
+            if (attackTimer <= 0)
+            {
+                isAttacking = false;
+            }
+        }
+
+        anim.SetBool("isAttacking", isAttacking);
+        
         rb.linearVelocity = moveInput * moveSpeed;
 
         bool isMoving = moveInput.sqrMagnitude > 0.01f;
