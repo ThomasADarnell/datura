@@ -3,8 +3,8 @@ using UnityEngine.EventSystems;
 
 public class EnemyBaseBehavior : MonoBehaviour
 {
-    public float maxSpeed = 3f;
-    public float accelerationRate = 4f; // How fast the enemy speeds up
+    public float maxSpeed = 2.5f;
+    public float accelerationRate = 2f; // How fast the enemy speeds up
     public float decelerationRate = 5f; // How fast the enemy slows down
     public float stoppingDistance = 1.5f; // Distance from target where slow-down begins
     public float damageCooldown = 2f;
