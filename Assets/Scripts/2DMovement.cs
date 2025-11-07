@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -50,23 +51,26 @@ public class PlayerMovement : MonoBehaviour
     {
         isAttacking = true;
         attackTimer = attackDuration;
-        ButterflyBehavior[] butterflies = FindObjectsByType<ButterflyBehavior>(FindObjectsSortMode.None);
+        EnemyManager enemyManager = FindObjectsByType<EnemyManager>(FindObjectsSortMode.None)[0];
+        List<EnemyBaseBehavior> butterflies = enemyManager.Enemies;
+        List<EnemyBaseBehavior> butterfliesToDamage = new List<EnemyBaseBehavior>();
 
         float lx = anim.GetFloat("LastX");
         float ly = anim.GetFloat("LastY");
         float facingAngle;
         if (lx > 0.5f) facingAngle = 0f;        // right
         else if (lx < -0.5f) facingAngle = 180f; // left
-        else if (ly > 0.5f) facingAngle = 90f;  // up
-        else facingAngle = 270f;               // down
+        else if (ly > 0.5f) facingAngle = 90f;   // up
+        else facingAngle = 270f;                 // down
 
-        foreach (ButterflyBehavior butterfly in butterflies)
+        foreach (EnemyBaseBehavior butterfly in butterflies)
         {
+            if (butterfly == null) continue;
             float dist = Vector2.Distance(this.transform.position, butterfly.transform.position);
             if (dist > distanceToAttack) continue;
 
             double projection = CheckProjection(this.transform.position, butterfly.transform.position);
-            float angleDiff = Mathf.Abs(Mathf.DeltaAngle((float)facingAngle, (float)projection));
+            float angleDiff = Mathf.Abs(Mathf.DeltaAngle(facingAngle, (float)projection));
             if (angleDiff <= 45f)
             {
                 if (this.ExplosionEffectPrefab)
@@ -74,12 +78,18 @@ public class PlayerMovement : MonoBehaviour
                     GameObject effect = Instantiate(this.ExplosionEffectPrefab, butterfly.transform.position, Quaternion.identity);
                     Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
                 }
-                Destroy(butterfly.gameObject);
+                butterfliesToDamage.Add(butterfly);
             }
             else
             {
                 Debug.Log("Not facing target; angleDiff=" + angleDiff);
             }
+        }
+
+        // Process damage after the loop
+        foreach (EnemyBaseBehavior butterfly in butterfliesToDamage)
+        {
+            enemyManager.enemyDamaged(butterfly);
         }
         FlowerBoss[] flowers = FindObjectsByType<FlowerBoss>(FindObjectsSortMode.None);
 
@@ -94,7 +104,7 @@ public class PlayerMovement : MonoBehaviour
             if (dist > distanceToAttack) continue;
 
             double projection = CheckProjection(this.transform.position, flower.transform.position);
-            float angleDiff = Mathf.Abs(Mathf.DeltaAngle((float)facingAngle, (float)projection));
+            float angleDiff = Mathf.Abs(Mathf.DeltaAngle(facingAngle, (float)projection));
             if (angleDiff <= 45f)
             {
                 if (this.ExplosionEffectPrefab)
@@ -123,7 +133,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         anim.SetBool("isAttacking", isAttacking);
-        
+
         rb.linearVelocity = moveInput * moveSpeed;
 
         bool isMoving = moveInput.sqrMagnitude > 0.01f;

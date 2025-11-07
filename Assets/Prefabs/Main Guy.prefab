@@ -335,6 +335,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
+  attackDuration: 0.25
   distanceToAttack: 1
   ExplosionEffectPrefab: {fileID: 1967835574231978638, guid: 3e196c9e632c76841a71cb6e2dc6d010, type: 3}
 --- !u!114 &5147545513457807351
@@ -384,9 +385,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc45dab8d45773d4d9968e12ead63734, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 4
-  maxHealth: 5
-  maxTotalHealth: 5
+  health: 6
+  maxHealth: 6
+  maxTotalHealth: 6
 --- !u!1 &8721513046624135725
 GameObject:
   m_ObjectHideFlags: 0

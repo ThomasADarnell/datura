@@ -47,6 +47,7 @@ public class EnemyManager : MonoBehaviour
     public void enemyDamaged(EnemyBaseBehavior enemy) // modify later
     {
         enemyKilled(enemy);
+        Destroy(enemy.gameObject);
     }
 
     private List<Rect> GetAllTileWorldRects()
