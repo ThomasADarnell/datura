@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Health : MonoBehaviour
 {
@@ -31,7 +32,9 @@ public class Health : MonoBehaviour
         PlayerData.Instance.currentHealth = currentHealth;  // update global
 
         heartDisplay.UpdateHearts(currentHealth, maxHealth);
-        if (currentHealth <= 0) Die();
+        if (currentHealth <= 0) {
+            SceneManager.LoadScene("Death");
+        }
     }
 
     public void Heal(int amount)
@@ -44,7 +47,7 @@ public class Health : MonoBehaviour
 
     void Die()
     {
-        Debug.Log("Player died!");
         // maybe respawn or reload scene later
+        
     }
 }
