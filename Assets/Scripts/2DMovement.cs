@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 moveInput;
     private Vector2 lastMoveDir = Vector2.down;
     private Health health;
-    public float distanceToAttack = 5.0f; //How close you need to be to do damage
+    public float distanceToAttack = 1f; //How close you need to be to do damage
 
     private enum FacingDirection
     {
@@ -76,6 +76,34 @@ public class PlayerMovement : MonoBehaviour
                     Debug.Log("Not facing target; angleDiff=" + angleDiff);
                 }
             }
+        FlowerBoss[] flowers = FindObjectsByType<FlowerBoss>(FindObjectsSortMode.None);
+
+        if (lx > 0.5f) facingAngle = 0f;        // right
+        else if (lx < -0.5f) facingAngle = 180f; // left
+        else if (ly > 0.5f) facingAngle = 90f;  // up
+        else facingAngle = 270f;               // down
+
+        foreach (FlowerBoss flower in flowers)
+        {
+            float dist = Vector2.Distance(this.transform.position, flower.transform.position);
+            if (dist > distanceToAttack) continue;
+
+            double projection = CheckProjection(this.transform.position, flower.transform.position);
+            float angleDiff = Mathf.Abs(Mathf.DeltaAngle((float)facingAngle, (float)projection));
+            if (angleDiff <= 45f)
+            {
+                if (this.ExplosionEffectPrefab)
+                {
+                    GameObject effect = Instantiate(this.ExplosionEffectPrefab, flower.transform.position, Quaternion.identity);
+                    Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
+                }
+                flower.TakeDamage(1);
+            }
+            else
+            {
+                Debug.Log("Not facing target; angleDiff=" + angleDiff);
+            }
+        }
     }
 
     void FixedUpdate()
