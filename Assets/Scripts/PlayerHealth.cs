@@ -1,8 +1,14 @@
 /*
- *  Author: ariel oliveira [o.arielg@gmail.com]
+ *  Original Author: ariel oliveira [o.arielg@gmail.com]
+ *  Adapted by Alyssa Workman and Thomas Darnell
  */
 
 using UnityEngine;
+<<<<<<< Updated upstream
+=======
+using UnityEngine.SceneManagement;
+using System.Collections;
+>>>>>>> Stashed changes
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -28,10 +34,19 @@ public class PlayerHealth : MonoBehaviour
     private float maxHealth;
     [SerializeField]
     private float maxTotalHealth;
+    private Color originalColor;
 
     public float Health { get { return health; } }
     public float MaxHealth { get { return maxHealth; } }
     public float MaxTotalHealth { get { return maxTotalHealth; } }
+    public SpriteRenderer spriteRenderer;
+    public Color warningColor = Color.red;
+
+    void Start()
+    {
+        originalColor = spriteRenderer.color;
+
+    }
 
     public void Heal(float health)
     {
@@ -43,6 +58,20 @@ public class PlayerHealth : MonoBehaviour
     {
         health -= dmg;
         ClampHealth();
+        float timer = 0f;
+        while (timer < 1)
+        {
+            // Flash color on and off
+            spriteRenderer.color = (timer % 0.1f < 0.05f) ? originalColor : warningColor;
+            timer += Time.deltaTime;
+            StartCoroutine(DelayColor(.25f));
+        }
+    }
+
+    public IEnumerator DelayColor(float time)
+    {
+        yield return new WaitForSeconds(time);
+        spriteRenderer.color = originalColor;
     }
 
     public void AddHealth()
