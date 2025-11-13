@@ -220,6 +220,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8803511399839944865}
   - component: {fileID: 6797313322615091632}
+  - component: {fileID: 8814476174463133255}
   m_Layer: 0
   m_Name: Tree
   m_TagString: Untagged
@@ -276,7 +277,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -292,6 +293,27 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3.063407, y: 2.9487743}
   m_EdgeRadius: 0
+--- !u!114 &8814476174463133255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1247087851319435516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 355877b56f24ccc41b1976aad19a389d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NorthRoot: {fileID: 8319564957060741040}
+  SouthRoot: {fileID: 1109387397055918785}
+  WestRoot: {fileID: 6551516365269601882}
+  EastRoot: {fileID: 5411763961724178251}
+  maxSpeed: 2.5
+  accelerationRate: 2
+  decelerationRate: 5
+  stoppingDistance: 1.5
+  damageCooldown: 2
 --- !u!1 &2305135448282268091
 GameObject:
   m_ObjectHideFlags: 0
