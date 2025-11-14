@@ -126,13 +126,12 @@ public class FlowerBoss : MonoBehaviour
                 DefeatFlower();
             }
         }
-        else if (isInvulnerable) // Safety check, should be true for non-Flower stages
+        else if (!isInvulnerable) // Safety check, should be true for non-Flower stages
         {
-            StopAllCoroutines();
             // --- Stage Reversion (Penalty) ---
             RevertToPreviousStage();
             // Stop the current coroutine and restart the growth cycle
-            
+            StopAllCoroutines();
             StartCoroutine(GrowthCycle());
         }
 
