@@ -1,83 +1,103 @@
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using System.Collections.Generic;
 
 public class ButterflyBehavior : EnemyBaseBehavior
 {
     // --- Public Variables (Configurable in Unity Inspector) ---
-    public float chaseRange = 5f;
-    public Tilemap walkableAreaTilemap;
-    private Vector2 pointA;
-    private Vector2 pointB;
-    private int walkableRange = 30;
-    private List<Vector2> currentPath;
-    private int cycleCount = 0;
-    private int currentPathIndex = 0;
-    private float pathNodeReachedThreshold = 0.1f;
-    private Vector3 lastPosition;
-    private float stuckTime = 0f;
+    public float chaseRange = 8f;
+    public float swarmDistance = 2f; // Distance to maintain around player when swarming
+    public float swoopDistance = 1f; // How close butterfly gets during swoop attacks
+    public float swoopCooldown = 3f; // Time between swoop attacks
+    public float circleSpeed = 2f; // Speed multiplier for circling around player
+    public Rect movementBounds = new Rect(3.9f, -21.8f, 33.1f, 61.7f); // Define the bounds for movement
+    public GameObject boundsObject; // Reference to the invisible sprite or object defining bounds
+    
     private bool isChasing = false;
-    private const float STUCK_THRESHOLD = 1.5f; // Time in seconds before considering stuck
-    private const float MOVEMENT_THRESHOLD = 0.05f; // Distance that must be moved to not be considered stuck
+    private bool isSwarming = false;
+    private bool isSwooping = false;
+    private float swarmAngle; // Current angle around the player
+    private float swoopTimer = 0f;
+    private Vector3 swoopTarget;
+    private Vector3 swarmCenter; // Point to circle around when swarming
+    
+    // Patrol variables (for when not chasing player)
+    private Vector3 patrolTarget;
+    private float patrolRadius = 10f;
+    private float patrolTimer = 0f;
+    private float patrolChangeTime = 5f;
 
 
 
     // --- Initialization ---
     void Start()
     {
-        if (walkableAreaTilemap == null)
+        player = GameObject.FindGameObjectWithTag("Player");
+
+        // Dynamically find boundsObject if not assigned
+        if (boundsObject == null)
         {
-            Debug.LogError($"[{gameObject.name}] walkableAreaTilemap is not assigned!");
-            return;
+            boundsObject = GameObject.FindWithTag("BoundsArea"); // Ensure the bounds object has the tag "BoundsArea"
+            if (boundsObject == null)
+            {
+                Debug.LogError("Bounds object not found in the scene. Ensure it has the tag 'BoundsArea'.");
+                return;
+            }
         }
 
-        lastPosition = transform.position;
-        pointA = transform.position;
-        pointB = chooseRandomPoint();
-        target = pointB;
-        player = GameObject.FindGameObjectWithTag("Player");
+        // Initialize movement bounds from boundsObject
+        var collider = boundsObject.GetComponent<BoxCollider2D>();
+        if (collider != null)
+        {
+            movementBounds = new Rect(
+                collider.bounds.min.x,
+                collider.bounds.min.y,
+                collider.bounds.size.x,
+                collider.bounds.size.y
+            );
+        }
+        else
+        {
+            Debug.LogError("Bounds object does not have a BoxCollider2D component.");
+        }
+
+        // Initialize patrol behavior
+        patrolTarget = transform.position + (Vector3)Random.insideUnitCircle.normalized * patrolRadius;
+        swarmAngle = Random.Range(0f, 360f); // Random starting angle for swarming
         
-        Debug.Log($"[{gameObject.name}] Initialized with walkableAreaTilemap: {walkableAreaTilemap.name}");
+        Debug.Log($"[{gameObject.name}] Butterfly initialized");
         
-        // Initialize the move direction
-        moveDirection = (target - transform.position).normalized;
+        // Initialize the move direction toward patrol target
+        moveDirection = (patrolTarget - transform.position).normalized;
     }
 
     // --- Update Loop ---
     void Update()
     {
-        // Check if we're stuck
-        float distanceMoved = Vector3.Distance(transform.position, lastPosition);
-        if (distanceMoved < MOVEMENT_THRESHOLD && !isChasing)
+        // Update swoop timer
+        if (swoopTimer > 0f)
         {
-            stuckTime += Time.deltaTime;
-            if (stuckTime > STUCK_THRESHOLD)
-            {
-                // Reset path and set current position as target
-                Debug.Log($"[{gameObject.name}] Stuck detected! Resetting path.");
-                pointA = transform.position;
-                pointB = transform.position;
-                target = transform.position;
-                currentPath = null;
-                currentPathIndex = 0;
-                stuckTime = 0f;
-            }
+            swoopTimer -= Time.deltaTime;
         }
-        else
-        {
-            stuckTime = 0f;
-        }
-        lastPosition = transform.position;
 
-        // Prioritize Chase state
+        // Check if player is in range
         if (player != null && Vector2.Distance(transform.position, player.transform.position) < chaseRange)
         {
-            isChasing = true;
-            ChasePlayer();
+            if (!isChasing)
+            {
+                // Just entered chase mode
+                isChasing = true;
+                isSwarming = false;
+                isSwooping = false;
+                swarmCenter = player.transform.position;
+            }
+            
+            ChaseAndSwarmPlayer();
         }
         else
         {
+            // Out of range - return to patrol
             isChasing = false;
+            isSwarming = false;
+            isSwooping = false;
             Patrol();
         }
     }
@@ -86,159 +106,141 @@ public class ButterflyBehavior : EnemyBaseBehavior
 
     void Patrol()
     {
-        if (currentPath == null || currentPath.Count == 0)
+        // Update patrol timer
+        patrolTimer += Time.deltaTime;
+        
+        // Change patrol target periodically
+        if (patrolTimer >= patrolChangeTime || Vector3.Distance(transform.position, patrolTarget) < 0.5f)
         {
-            UpdatePath();
-            if (currentPath == null || currentPath.Count == 0)
-            {
-                // Fallback to direct movement if no path is found
-                moveDirection = (target - transform.position).normalized;
-            }
+            patrolTarget = transform.position + (Vector3)Random.insideUnitCircle.normalized * patrolRadius;
+            patrolTimer = 0f;
         }
-
-        if (currentPath != null && currentPath.Count > 0)
-        {
-            // Move towards the current path node
-            Vector2 currentNode = currentPath[currentPathIndex];
-            moveDirection = ((Vector3)currentNode - transform.position).normalized;
-
-            // Check if we reached the current node
-            if (Vector2.Distance(transform.position, currentNode) < pathNodeReachedThreshold)
-            {
-                currentPathIndex++;
-                if (currentPathIndex >= currentPath.Count)
-                {
-                    currentPath = null;
-                    currentPathIndex = 0;
-                }
-            }
-        }
-
-        // 2. Adjust speed based on proximity (Deceleration)
-        float desiredSpeed = base.GetDeceleratedSpeed(target);
-
-        // 3. Accelerate current speed towards the desired speed
+        
+        // Move toward patrol target
+        moveDirection = (patrolTarget - transform.position).normalized;
+        
+        // Use reduced speed for patrol
+        float desiredSpeed = maxSpeed * 0.5f;
         base.ApplyAcceleration(desiredSpeed);
-
-        // 4. Move the enemy
         base.MoveEnemy();
-
-        // 5. Check if the target is reached
-        CheckForTargetReached();
+        
+        // Clamp position to movement bounds
+        transform.position = ClampToBounds(transform.position);
     }
 
-    void ChasePlayer()
+    void ChaseAndSwarmPlayer()
     {
-        // The enemy will always try to maintain maxSpeed when chasing
-        moveDirection = (player.transform.position - transform.position).normalized;
-        float desiredSpeed = maxSpeed;
-
-        // Apply acceleration to reach maxSpeed
+        float distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
+        
+        // If close enough, enter swarming behavior
+        if (distanceToPlayer <= swarmDistance)
+        {
+            if (!isSwarming)
+            {
+                isSwarming = true;
+                swarmCenter = player.transform.position;
+            }
+            
+            SwarmAroundPlayer();
+        }
+        else
+        {
+            // Fly directly toward player
+            isSwarming = false;
+            isSwooping = false;
+            
+            moveDirection = (player.transform.position - transform.position).normalized;
+            float desiredSpeed = maxSpeed;
+            
+            base.ApplyAcceleration(desiredSpeed);
+            base.MoveEnemy();
+        }
+    }
+    
+    void SwarmAroundPlayer()
+    {
+        // Update swarm center to follow player
+        swarmCenter = Vector3.Lerp(swarmCenter, player.transform.position, Time.deltaTime * 2f);
+        
+        // Check if we should start a swoop attack
+        if (swoopTimer <= 0f && !isSwooping && Random.Range(0f, 1f) < 0.02f) // 2% chance per frame
+        {
+            StartSwoop();
+        }
+        
+        if (isSwooping)
+        {
+            PerformSwoop();
+        }
+        else
+        {
+            CircleAroundPlayer();
+        }
+    }
+    
+    void CircleAroundPlayer()
+    {
+        // Increment angle to circle around player
+        swarmAngle += circleSpeed * Time.deltaTime * 50f; // 50 degrees per second at default speed
+        if (swarmAngle >= 360f) swarmAngle -= 360f;
+        
+        // Calculate position on circle around player
+        float angleRad = swarmAngle * Mathf.Deg2Rad;
+        Vector3 circlePos = swarmCenter + new Vector3(
+            Mathf.Cos(angleRad) * swarmDistance,
+            Mathf.Sin(angleRad) * swarmDistance,
+            0f
+        );
+        
+        // Move toward circle position
+        moveDirection = (circlePos - transform.position).normalized;
+        
+        float desiredSpeed = maxSpeed * circleSpeed;
         base.ApplyAcceleration(desiredSpeed);
-
-        // Move the enemy
         base.MoveEnemy();
+    }
+    
+    void StartSwoop()
+    {
+        isSwooping = true;
+        swoopTimer = swoopCooldown;
+        
+        // Set swoop target slightly past the player
+        Vector3 playerPos = player.transform.position;
+        Vector3 directionToPlayer = (playerPos - transform.position).normalized;
+        swoopTarget = playerPos + directionToPlayer * swoopDistance;
+    }
+    
+    void PerformSwoop()
+    {
+        float distanceToSwoopTarget = Vector3.Distance(transform.position, swoopTarget);
+        
+        if (distanceToSwoopTarget > 0.2f)
+        {
+            // Still swooping toward target
+            moveDirection = (swoopTarget - transform.position).normalized;
+            float desiredSpeed = maxSpeed * 1.5f; // Faster during swoop
+            
+            base.ApplyAcceleration(desiredSpeed);
+            base.MoveEnemy();
+        }
+        else
+        {
+            // Swoop complete, return to circling
+            isSwooping = false;
+        }
     }
 
     // --- Helper Methods ---
-
-    // **4. Target Switch Logic**
-    void CheckForTargetReached()
+    private Vector3 ClampToBounds(Vector3 position)
     {
-        // We check against a very small value since deceleration should bring the speed close to zero
-        if(cycleCount >= 3)
-        {
-            pointA = transform.position;
-            pointB = chooseRandomPoint();
-            target = pointB;
-            UpdatePath();
-            cycleCount = 0;
-        }
-        if (Vector3.Distance(transform.position, target) < 0.1f)
-        {
-            // Switch the target point
-            target = ((Vector2)target == pointA) ? pointB : pointA;
-
-            // Important: Reset the current speed to zero so the next Patrol movement starts with acceleration
-            // (You could also implement a brief Idle state here if you wanted a pause!)
-            currentSpeed = 0f;
-            cycleCount++;
-        }
+        return new Vector3(
+            Mathf.Clamp(position.x, movementBounds.xMin, movementBounds.xMax),
+            Mathf.Clamp(position.y, movementBounds.yMin, movementBounds.yMax),
+            position.z
+        );
     }
 
-    private List<Rect> GetAllTileWorldRects()
-    {
-        var rects = new List<Rect>();
-        if (walkableAreaTilemap == null) return rects;
-
-        var bounds = walkableAreaTilemap.cellBounds;
-        Vector3 cellSize = Vector3.one;
-        if (walkableAreaTilemap.layoutGrid != null)
-            cellSize = walkableAreaTilemap.layoutGrid.cellSize;
-
-        for (int x = bounds.xMin; x < bounds.xMax; x++)
-        {
-            for (int y = bounds.yMin; y < bounds.yMax; y++)
-            {
-                var cellPos = new Vector3Int(x, y, 0);
-                if (!walkableAreaTilemap.HasTile(cellPos)) continue;
-
-                Vector3 center = walkableAreaTilemap.GetCellCenterWorld(cellPos);
-                float halfX = cellSize.x * 0.5f;
-                float halfY = cellSize.y * 0.5f;
-                var rect = new Rect(center.x - halfX, center.y - halfY, cellSize.x, cellSize.y);
-                rects.Add(rect);
-            }
-        }
-
-        return rects;
-    }
-    private void UpdatePath()
-    {
-        var walkableRects = GetAllTileWorldRects();
-        if (walkableRects.Count == 0) return;
-        pointA = transform.position;
-        pointB = chooseRandomPoint();
-
-        Vector2 start = transform.position;
-        Vector2 end = target;
-
-        currentPath = AStar.FindPath(walkableRects, start, end);
-        currentPathIndex = 0;
-    }
-
-    public Vector2 chooseRandomPoint()
-    {
-        var tileRects = GetAllTileWorldRects();
-        Vector2 currentPos = transform.position;
-
-        if (tileRects.Count == 0)
-        {
-            // Debug.LogWarning("No walkable tiles found!");
-            return currentPos;
-        }
-
-        int randomIndex = Random.Range(0, tileRects.Count);
-        var rect = tileRects[randomIndex];
-        float rx = Random.Range(rect.xMin, rect.xMax);
-        float ry = Random.Range(rect.yMin, rect.yMax);
-        Vector2 randomPoint = new Vector2(rx, ry);
-        
-        int attempts = 0;
-        while(Vector2.Distance(currentPos, randomPoint) > walkableRange && attempts < 100)
-        {
-            attempts++;
-            if (tileRects.Count <= 1) break;
-            
-            int ri = Random.Range(0, tileRects.Count);
-            var rec = tileRects[ri];
-            rx = Random.Range(rec.xMin, rec.xMax);
-            ry = Random.Range(rec.yMin, rec.yMax);
-            randomPoint = new Vector2(rx, ry);
-        }
-
-        return randomPoint;
-    }
     // private void OnDrawGizmos()
     // {
     //     if (currentPath != null && currentPath.Count > 0)

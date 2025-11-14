@@ -3,7 +3,6 @@ using UnityEngine.InputSystem;
 
 public class Movement : MonoBehaviour
 {
-    volatile int state;
     private Vector2 movementInput;
     public float cooldownTime = 1.0f;
     private float nextActionTime = 0.0f;
@@ -42,7 +41,6 @@ public class Movement : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        state = 0;
     }
 
     // Update is called once per frame
