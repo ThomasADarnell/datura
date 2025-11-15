@@ -18,7 +18,7 @@ public class EnemyManager : MonoBehaviour
     }
 
     public Tilemap spawnTilemap;
-    public Tilemap walkableAreaTilemap;
+    // public Tilemap walkableAreaTilemap; // No longer needed - butterflies fly over everything
     public EnemyBaseBehavior enemyPrefab;
     public bool spawnOnStart = true;
 
@@ -53,7 +53,10 @@ public class EnemyManager : MonoBehaviour
     private List<Rect> GetAllTileWorldRects()
     {
         var rects = new List<Rect>();
-        if (spawnTilemap == null) return rects;
+        if (spawnTilemap == null) {
+            Debug.LogError("Spawn tilemap is not assigned.");
+            return rects;
+        }
 
         var bounds = spawnTilemap.cellBounds;
         Vector3 cellSize = Vector3.one;
@@ -72,6 +75,8 @@ public class EnemyManager : MonoBehaviour
                 float halfY = cellSize.y * 0.5f;
                 var rect = new Rect(center.x - halfX, center.y - halfY, cellSize.x, cellSize.y);
                 rects.Add(rect);
+
+                Debug.Log($"Tile at {cellPos} with world rect {rect}");
             }
         }
 
@@ -80,43 +85,30 @@ public class EnemyManager : MonoBehaviour
 
     public void SpawnRandomInTilemap()
     {
-        if (spawnTilemap == null || enemyPrefab == null) return;
+        if (spawnTilemap == null || enemyPrefab == null) {
+            Debug.LogError("Spawn tilemap or enemy prefab is not assigned.");
+            return;
+        }
 
         var tileRects = GetAllTileWorldRects();
-        if (tileRects.Count == 0) return;
-        for(int i =0; i < Random.Range(respawnAmountLowerBound, respawnAmountUpperBound + 1); i++)
+        if (tileRects.Count == 0) {
+            Debug.LogWarning("No valid tiles found in the spawn tilemap.");
+            return;
+        }
+
+        for (int i = 0; i < Random.Range(respawnAmountLowerBound, respawnAmountUpperBound + 1); i++)
         {
             var rect = tileRects[Random.Range(0, tileRects.Count)];
             if (enemies.Count >= maxEnemies) return;
+
             float rx = Random.Range(rect.xMin, rect.xMax);
             float ry = Random.Range(rect.yMin, rect.yMax);
             var pos = new Vector3(rx, ry, 0f);
+
+            Debug.Log($"Spawning enemy at position {pos} within tile rect {rect}");
+
             var enemy = Instantiate(enemyPrefab, pos, Quaternion.identity);
-            var butterflyBehavior = enemy as ButterflyBehavior;
-            if (butterflyBehavior != null)
-            {
-                butterflyBehavior.walkableAreaTilemap = walkableAreaTilemap;
-            }
-            else
-            {
-                Debug.LogError("Enemy prefab is not a ButterflyBehavior!");
-            }
             enemies.Add(enemy);
         }
-        // foreach (var rect in tileRects)
-        // {
-        //     int count = Random.Range(respawnAmountLowerBound, respawnAmountUpperBound + 1);
-        //     for (int i = 0; i < count; i++)
-        //     {
-        //         if (enemies.Count >= maxEnemies) return;
-
-        //         float rx = Random.Range(rect.xMin, rect.xMax);
-        //         float ry = Random.Range(rect.yMin, rect.yMax);
-        //         var pos = new Vector3(rx, ry, 0f);
-        //         var enemy = Instantiate(enemyPrefab, pos, Quaternion.identity);
-        //         ((ButterflyBehavior)enemy).walkableAreaTilemap = walkableAreaTilemap;
-        //         enemies.Add(enemy);
-        //     }
-        // }
     }
 }
