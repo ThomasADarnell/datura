@@ -79,7 +79,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 18
+  m_SortingOrder: 51
   m_Sprite: {fileID: 21300000, guid: 9bfff1f2afdffb747ae8fd73d0980f4c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -99,7 +99,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5799986589096058647}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -136,7 +136,10 @@ MonoBehaviour:
   stoppingDistance: 6
   damageCooldown: 2
   chaseRange: 5
-  walkableAreaTilemap: {fileID: 0}
+  swarmDistance: 2
+  swoopDistance: 1
+  swoopCooldown: 3
+  circleSpeed: 2
 --- !u!60 &7996337511103926100
 PolygonCollider2D:
   m_ObjectHideFlags: 0
