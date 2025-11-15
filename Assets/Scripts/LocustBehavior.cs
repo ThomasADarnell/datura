@@ -8,27 +8,15 @@ public class LocustBehavior : MonoBehaviour
     public GameObject WestRoot;
     public GameObject EastRoot;
 
-    public float maxSpeed = 2.5f;
-    public float accelerationRate = 2f; // How fast the enemy speeds up
-    public float decelerationRate = 5f; // How fast the enemy slows down
-    public float stoppingDistance = 1.5f; // Distance from target where slow-down begins
     public float damageCooldown = 2f;
 
-
-    protected Vector3 target;
-    protected GameObject player;
-    protected float currentSpeed = 0f; // New: Tracks the speed in the current frame
-    protected Vector3 moveDirection; // Tracks the desired movement direction
     protected float nextDamageTime = 0f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
-    public float moveDistance = 3.0f; // Max distance from start position
+    public float moveDistance = .5f; // Max distance from start position
     public float totalDuration = 1.0f; // Total time for the entire cycle (out and back)
-    public KeyCode triggerKey = KeyCode.Space; // The button to press
 
     private Vector3 startPosition;
-    private bool isAnimating = false;
-
     void Start()
     {
 
@@ -54,38 +42,38 @@ public class LocustBehavior : MonoBehaviour
                 if (distUp < distLeft && distUp < distRight && distUp < distDown)
                 {
                     this.NorthRoot.SetActive(true);
-                    startPosition = NorthRoot.transform.position;
-                    StartCoroutine(this.Attacking(NorthRoot));
+                    Vector3 end = new Vector3(0f, moveDistance, 0f);
+                    StartCoroutine(this.Attacking(NorthRoot, end));
                 }
                 if (distLeft < distUp && distLeft < distRight && distLeft < distDown)
                 {
                     this.WestRoot.SetActive(true);
-                    startPosition = WestRoot.transform.position;
-                    //StartCoroutine(this.Attacking(WestRoot));
+                    Vector3 end = new Vector3(-moveDistance, 0f, 0f);
+                    StartCoroutine(this.Attacking(WestRoot, end));
                 }
                 if (distRight < distLeft && distRight < distUp && distRight < distDown)
                 {
                     this.EastRoot.SetActive(true);
-                    startPosition = EastRoot.transform.position;
-                    //StartCoroutine(this.Attacking(EastRoot));
+                    Vector3 end = new Vector3(moveDistance, 0f, 0f);
+                    StartCoroutine(this.Attacking(EastRoot, end));
                 }
                 if (distDown < distLeft && distDown < distRight && distDown < distUp)
                 {
                     this.SouthRoot.SetActive(true);
-                    startPosition = SouthRoot.transform.position;
-                    //StartCoroutine(this.Attacking(SouthRoot));
+                    Vector3 end = new Vector3(0f, -moveDistance, 0f);
+                    StartCoroutine(this.Attacking(SouthRoot, end));
                 }
 
             }
             nextDamageTime = Time.time + damageCooldown;
         }
     }
-    public IEnumerator Attacking(GameObject direction)
+    public IEnumerator Attacking(GameObject direction, Vector3 endPosition)
     {
-        isAnimating = true;
+        startPosition = direction.transform.localPosition;
+        endPosition += startPosition;
 
         // Calculate the end position relative to the object's local forward direction
-        Vector3 endPosition = startPosition + direction.transform.forward * moveDistance;
 
         float timeElapsed = 0f;
 
@@ -111,7 +99,6 @@ public class LocustBehavior : MonoBehaviour
         }
         direction.transform.localPosition = startPosition; // Ensure it returns home exactly
 
-        isAnimating = false; // Animation finished, can trigger again
         direction.SetActive(false);
     }
 
