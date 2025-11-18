@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 public class PoisonFumeEffect : MonoBehaviour
@@ -12,6 +13,11 @@ public class PoisonFumeEffect : MonoBehaviour
     private List<Collider> objectsInRange = new List<Collider>();
     private float timeSinceLastTick;
 
+    private PlayerHealth playerHealth; // Reference to the player's health component
+    private PlayerMovement playerMovement; // Reference to the player's movement component
+    private bool isInRange = false;
+    private const float poisonRadius = 3f; // Define the radius clearly
+
     // Use Start() to destroy the effect after its duration
     void Start()
     {
@@ -19,43 +25,59 @@ public class PoisonFumeEffect : MonoBehaviour
     }
 
     // Add objects to the list when they enter the trigger area
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
-        { // When player runs into the shrub
-            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();  // get player health
-            if (playerHealth != null)
+        {
+            playerHealth = other.GetComponent<PlayerHealth>();
+            playerMovement = other.GetComponent<PlayerMovement>();
+
+            if (playerHealth != null && playerMovement != null)
             {
-                playerHealth.TakeDamage(1);  // apply damage
+                // Apply initial damage
+                playerHealth.TakeDamage(1);
+                isInRange = true;
+                StartCoroutine(ApplyPoisonDamage());
             }
         }
     }
 
-    // Remove objects from the list when they leave the trigger area
-    private void OnTriggerExit(Collider other)
+    private void OnTriggerExit2D(Collider2D other)
     {
-        if (objectsInRange.Contains(other))
+        if (other.CompareTag("Player"))
         {
-            objectsInRange.Remove(other);
+            isInRange = false;
+            // Reset player speed when they leave the area
+            if (playerMovement != null)
+            {
+                playerMovement.moveSpeed = 5f;
+            }
+            // Stop the coroutine when the player leaves
+            StopCoroutine(ApplyPoisonDamage());
         }
     }
 
     // Iterate through all objects currently in range and apply damage
-    private void ApplyPoisonDamage()
+    private IEnumerator ApplyPoisonDamage()
     {
-        // Use a reverse loop or a copy to avoid issues if an object is destroyed while iterating
-        for (int i = objectsInRange.Count - 1; i >= 0; i--)
+        // Set slow speed while poisoned
+        playerMovement.moveSpeed = 2f;
+
+        while (isInRange) // Continue as long as the player is in the trigger zone
         {
-            Collider collider = objectsInRange[i];
+            // Re-calculate distance every loop iteration to ensure they are within the *poison* radius (if different from the trigger collider)
+            float distance = Vector2.Distance(transform.position, playerHealth.transform.position);
 
-            // Get the Health component (make sure this name matches your script!)
-            // Example uses 'PlayerHealth' as you used it in your script.
-            PlayerHealth healthSystem = collider.GetComponent<PlayerHealth>();
-
-            if (healthSystem != null)
+            if (distance <= poisonRadius)
             {
-                healthSystem.TakeDamage(damagePerTick);
+                playerHealth.TakeDamage(1); // Apply damage periodically
             }
+
+            // Wait for a period of time before the next iteration
+            yield return new WaitForSeconds(2.0f); // Damage every 1 second
         }
+        
+        // Code here runs after the while loop (when isInRange is false)
+        // Note: speed reset is handled in OnTriggerExit2D in this implementation
     }
 }
