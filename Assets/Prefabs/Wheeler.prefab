@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3150912775024027891}
   - component: {fileID: 2371978130193731195}
   - component: {fileID: 3504148670084436465}
+  - component: {fileID: -488916961978620308}
   m_Layer: 0
   m_Name: Wheeler
   m_TagString: Untagged
@@ -116,7 +117,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!70 &2371978130193731195
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -176,3 +177,32 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-488916961978620308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4202971675749598911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5ddf7d1886e85b4f86593adcd46069c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxSpeed: 2.5
+  accelerationRate: 1.5
+  decelerationRate: 5
+  stoppingDistance: 1.5
+  damageCooldown: 2
+  currentHealth: 2
+  maxHealth: 2
+  detectionRange: 15
+  idleTimeThreshold: 6
+  chaseSpeed: 6
+  movementBounds:
+    serializedVersion: 2
+    x: 3.9
+    y: -21.8
+    width: 33.1
+    height: 61.7
+  boundsObject: {fileID: 0}

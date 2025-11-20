@@ -39,6 +39,13 @@ public class Wheeler : EnemyBaseBehavior
         player = GameObject.FindGameObjectWithTag("Player");
         anim = GetComponent<Animator>();
         
+        // Freeze rotation to prevent sprite from rotating
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.freezeRotation = true;
+        }
+        
         if (player != null)
         {
             lastPlayerPosition = player.transform.position;
@@ -76,6 +83,7 @@ public class Wheeler : EnemyBaseBehavior
             anim.SetBool("IsEmerging", false);
             anim.SetBool("IsDead", false);
             anim.SetBool("WasDamaged", false);
+            anim.SetBool("FinishedCurrentAnim", false);
         }
         
         Debug.Log($"[{gameObject.name}] Wheeler initialized in Hiding state");
@@ -150,6 +158,14 @@ public class Wheeler : EnemyBaseBehavior
         {
             anim.SetBool("IsHiding", false);
             anim.SetBool("IsEmerging", true);
+            anim.SetBool("FinishedCurrentAnim", false);
+        }
+        
+        // Enable the collider as a trigger when emerging
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null)
+        {
+            col.isTrigger = true;
         }
         
         // Start chasing after a short delay (simulating emergence animation)
@@ -180,16 +196,37 @@ public class Wheeler : EnemyBaseBehavior
         // Use fast chase speed
         float desiredSpeed = chaseSpeed;
         base.ApplyAcceleration(desiredSpeed);
-        base.MoveEnemy();
+        
+        // Move without rotating
+        MoveWithoutRotation();
         
         // Clamp position to movement bounds to avoid hitting walls
         transform.position = ClampToBounds(transform.position);
+    }
+    
+    // Override movement to prevent rotation
+    private void MoveWithoutRotation()
+    {
+        float actualSpeed = Mathf.Min(currentSpeed, maxSpeed);
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            transform.position + moveDirection,
+            actualSpeed * Time.deltaTime
+        );
+        // No rotation applied - sprite stays upright
     }
     
     // --- Damage System ---
     
     public void TakeDamage(int damage)
     {
+        // Can't damage Wheeler while hiding
+        if (currentState == WheelerState.Hiding)
+        {
+            Debug.Log($"[{gameObject.name}] Wheeler is hiding and cannot be damaged!");
+            return;
+        }
+        
         if (currentHealth <= 0) return;
         
         currentHealth -= damage;
@@ -199,6 +236,7 @@ public class Wheeler : EnemyBaseBehavior
         if (anim != null)
         {
             anim.SetBool("WasDamaged", true);
+            anim.SetBool("FinishedCurrentAnim", false);
             // Reset damage flag after a short delay
             Invoke(nameof(ResetDamageFlag), 0.5f);
         }
@@ -216,6 +254,7 @@ public class Wheeler : EnemyBaseBehavior
         if (anim != null)
         {
             anim.SetBool("WasDamaged", false);
+            anim.SetBool("FinishedCurrentAnim", true);
         }
     }
     
@@ -226,6 +265,7 @@ public class Wheeler : EnemyBaseBehavior
         if (anim != null)
         {
             anim.SetBool("IsDead", true);
+            anim.SetBool("FinishedCurrentAnim", false);
         }
         
         AudioManager.Instance.PlayEnemyDeath();
