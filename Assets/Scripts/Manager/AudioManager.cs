@@ -12,8 +12,10 @@ public class AudioManager : MonoBehaviour
 
     [Header("Music Tracks")]
     [SerializeField] private AudioClip menuMusic;
-    [SerializeField] private AudioClip levelMusic;
-    [SerializeField] private AudioClip bossMusic;
+    [SerializeField] private AudioClip levelOneMusic;
+    [SerializeField] private AudioClip levelTwoMusic;
+    [SerializeField] private AudioClip bossOneMusic;
+    [SerializeField] private AudioClip bossTwoMusic;
     [SerializeField] private AudioClip killScreenMusic;
 
     [Header("Sound Effects")]
@@ -24,6 +26,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip enemyDeathSound;
     [SerializeField] private AudioClip buttonClickSound;
     [SerializeField] private AudioClip pickupSound;
+    [SerializeField] private AudioClip powerupSound;
 
     [Header("Settings")]
     [SerializeField] private float musicVolume = 0.7f;
@@ -92,12 +95,12 @@ public class AudioManager : MonoBehaviour
         {
             { "Menu", menuMusic },
             { "Level Select", menuMusic },
-            { "Lvl1", levelMusic },
-            { "Lvl1-3d", levelMusic },
-            { "Lvl2", levelMusic },
+            { "Lvl1", levelOneMusic },
+            { "Lvl1-3d", levelOneMusic },
+            { "Lvl2", levelTwoMusic },
             { "Kill Screen", killScreenMusic },
-            { "SampleScene", levelMusic },
-            { "Test", levelMusic }
+            { "SampleScene", levelOneMusic },
+            { "Test", levelOneMusic }
         };
     }
 
@@ -241,6 +244,21 @@ public class AudioManager : MonoBehaviour
     public void PlayPickup()
     {
         PlaySound(pickupSound);
+    }
+
+    public void PlayPowerup()
+    {
+        PlaySound(powerupSound);
+    }
+
+    public void PlayBossOneMusic()
+    {
+        PlayMusic(bossOneMusic);
+    }
+
+    public void PlayBossTwoMusic()
+    {
+        PlayMusic(bossTwoMusic);
     }
 
     // Volume control

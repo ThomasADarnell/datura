@@ -63,6 +63,8 @@ public class PlayerMovement : MonoBehaviour
         else if (ly > 0.5f) facingAngle = 90f;   // up
         else facingAngle = 270f;                 // down
 
+        AudioManager.Instance.PlayPlayerStab();
+
         foreach (EnemyBaseBehavior butterfly in butterflies)
         {
             if (butterfly == null) continue;
