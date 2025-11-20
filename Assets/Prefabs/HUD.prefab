@@ -76,7 +76,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8733380488736498696
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1564,7 +1564,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iUnderstandTheSetup: 1
   UI: {fileID: 5164673220074610437}
-  items: []
+  items:
+  - itemType: Apple
+    itemImage: {fileID: -953720059, guid: 839b722adf8b9f24a9f027976a4a231d, type: 3}
+    maxStackAmount: 1
+    displayItemAmount: 0
+    draggable: 0
+    pressable: 1
+    RelatedGameObject: {fileID: 7727855029256854916, guid: b5dfe707cdf36a344905860a4599667b, type: 3}
+    itemAction:
+      m_PersistentCalls:
+        m_Calls: []
+    isNull: 0
   initializeInventory:
   - inventoryName: Hotbar
     rows: 1

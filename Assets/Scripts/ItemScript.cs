@@ -7,15 +7,18 @@ namespace InventorySampleScene
         // Start is called before the first frame update
         [SerializeField]
         string itemName;
+        private bool trigger;
         private void OnTriggerEnter2D(Collider2D other)
         {
+            
+            if (trigger ) {trigger = false;}
             Debug.Log("Collision");
             if (other.CompareTag("Player"))
             {
                 if (!InventoryController.instance.InventoryFull("Hotbar", itemName))
                 {
                     InventoryController.instance.AddItem("Hotbar", itemName);
-                    AudioManager.Instance.PlayPickup();
+                    //AudioManager.Instance.PlayPickup();
                     Destroy(gameObject);
 
                 }
@@ -25,6 +28,7 @@ namespace InventorySampleScene
                 }
 
             }
+            trigger = true;
         }
     }
 }
