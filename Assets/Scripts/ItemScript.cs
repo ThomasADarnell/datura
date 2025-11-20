@@ -1,0 +1,30 @@
+using UnityEngine;
+using InventorySystem;
+namespace InventorySampleScene
+{
+    public class ItemScript : MonoBehaviour
+    {
+        // Start is called before the first frame update
+        [SerializeField]
+        string itemName;
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            Debug.Log("Collision");
+            if (other.CompareTag("Player"))
+            {
+                if (!InventoryController.instance.InventoryFull("Hotbar", itemName))
+                {
+                    InventoryController.instance.AddItem("Hotbar", itemName);
+                    AudioManager.Instance.PlayPickup();
+                    Destroy(gameObject);
+
+                }
+                else
+                {
+                    Debug.Log("Inventory Cannot Fit Item");
+                }
+
+            }
+        }
+    }
+}
