@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Animator anim;
     private Vector2 moveInput;
+    private bool canMove = true; 
+
     private Vector2 lastMoveDir = Vector2.down;
     private bool isAttacking = false;
     private Health health;
@@ -39,6 +42,10 @@ public class PlayerMovement : MonoBehaviour
     }
     void Start()
     {
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody2D>();
+        }
         health = FindAnyObjectByType<Health>();
     }
 
@@ -136,25 +143,44 @@ public class PlayerMovement : MonoBehaviour
 
         anim.SetBool("isAttacking", isAttacking);
 
-        rb.linearVelocity = moveInput * moveSpeed;
-
-        bool isMoving = moveInput.sqrMagnitude > 0.01f;
-
-        if (isMoving)
+        if (canMove)
         {
-            lastMoveDir = moveInput.normalized;
-            anim.SetFloat("MoveX", moveInput.x);
-            anim.SetFloat("MoveY", moveInput.y);
-        }
-        else
-        {
-            anim.SetFloat("MoveX", lastMoveDir.x);
-            anim.SetFloat("MoveY", lastMoveDir.y);
-        }
+            rb.linearVelocity = moveInput * moveSpeed;
 
-        anim.SetBool("isMoving", isMoving);
-        anim.SetFloat("LastX", lastMoveDir.x);
-        anim.SetFloat("LastY", lastMoveDir.y);
+            bool isMoving = moveInput.sqrMagnitude > 0.01f;
+
+            if (isMoving)
+            {
+                lastMoveDir = moveInput.normalized;
+                anim.SetFloat("MoveX", moveInput.x);
+                anim.SetFloat("MoveY", moveInput.y);
+            }
+            else
+            {
+                anim.SetFloat("MoveX", lastMoveDir.x);
+                anim.SetFloat("MoveY", lastMoveDir.y);
+            }
+
+            anim.SetBool("isMoving", isMoving);
+            anim.SetFloat("LastX", lastMoveDir.x);
+            anim.SetFloat("LastY", lastMoveDir.y);
+        }
+    }
+    public void ApplyKnockback(Vector2 direction, float force, float duration)
+    {
+        // Stop any existing knockback coroutine before starting a new one
+        StopCoroutine(KnockbackRoutine(direction, force, duration)); 
+        StartCoroutine(KnockbackRoutine(direction, force, duration));
     }
 
+    private IEnumerator KnockbackRoutine(Vector2 direction, float force, float duration)
+    {
+        canMove = false; 
+
+        rb.AddForce(direction * force, ForceMode2D.Impulse); // Use Impulse for instant push
+
+        yield return new WaitForSeconds(duration);
+
+        canMove = true;
+    }
 }
