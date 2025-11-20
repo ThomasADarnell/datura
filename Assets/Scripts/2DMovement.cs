@@ -100,6 +100,32 @@ public class PlayerMovement : MonoBehaviour
         {
             enemyManager.enemyDamaged(butterfly);
         }
+        
+        // Handle Wheeler enemies
+        Wheeler[] wheelers = FindObjectsByType<Wheeler>(FindObjectsSortMode.None);
+        foreach (Wheeler wheeler in wheelers)
+        {
+            if (wheeler == null) continue;
+            float dist = Vector2.Distance(this.transform.position, wheeler.transform.position);
+            if (dist > distanceToAttack) continue;
+
+            double projection = CheckProjection(this.transform.position, wheeler.transform.position);
+            float angleDiff = Mathf.Abs(Mathf.DeltaAngle(facingAngle, (float)projection));
+            if (angleDiff <= 45f)
+            {
+                if (this.ExplosionEffectPrefab)
+                {
+                    GameObject effect = Instantiate(this.ExplosionEffectPrefab, wheeler.transform.position, Quaternion.identity);
+                    Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
+                }
+                wheeler.TakeDamage(1);
+            }
+            else
+            {
+                Debug.Log("Not facing Wheeler; angleDiff=" + angleDiff);
+            }
+        }
+        
         FlowerBoss[] flowers = FindObjectsByType<FlowerBoss>(FindObjectsSortMode.None);
 
         if (lx > 0.5f) facingAngle = 0f;        // right
