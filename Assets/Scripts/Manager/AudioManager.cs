@@ -207,7 +207,7 @@ public class AudioManager : MonoBehaviour
     {
         if (clip != null)
         {
-            sfxSource.PlayOneShot(clip, volumeMultiplier);
+            sfxSource.PlayOneShot(clip, volumeMultiplier * sfxVolume);
         }
     }
 
@@ -218,7 +218,11 @@ public class AudioManager : MonoBehaviour
 
     public void PlayPlayerHurt()
     {
+        float tempAmp = 5;
+        float savedAmp = sfxVolume;
+        sfxVolume = tempAmp;
         PlaySound(playerHurtSound);
+        sfxVolume = savedAmp;
     }
 
     public void PlayPlayerDeath()
@@ -271,7 +275,8 @@ public class AudioManager : MonoBehaviour
     public void SetSFXVolume(float volume)
     {
         sfxVolume = Mathf.Clamp01(volume);
-        sfxSource.volume = sfxVolume;
+        // Note: sfxSource.volume doesn't affect PlayOneShot volume
+        // The volume is controlled by the volumeMultiplier in PlayOneShot
     }
 
     public float GetMusicVolume() => musicVolume;
