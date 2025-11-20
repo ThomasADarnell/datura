@@ -10,8 +10,6 @@ namespace InventorySampleScene
         private bool trigger;
         private void OnTriggerEnter2D(Collider2D other)
         {
-            
-            if (trigger ) {trigger = false;}
             Debug.Log("Collision");
             if (other.CompareTag("Player"))
             {
@@ -28,7 +26,6 @@ namespace InventorySampleScene
                 }
 
             }
-            trigger = true;
         }
     }
 }

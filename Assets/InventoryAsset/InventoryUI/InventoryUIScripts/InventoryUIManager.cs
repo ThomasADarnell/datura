@@ -580,6 +580,22 @@ namespace InventorySystem
         /// </summary>
         private void InitSlotPressDict()
         {
+            PressableSlot one;
+            one.position = 0;
+            one.buttonPress = '1';
+            SelectSlotOnButtonPress.Add(one);
+            PressableSlot two;
+            two.position = 1;
+            two.buttonPress = '2';
+            SelectSlotOnButtonPress.Add(two);
+            PressableSlot three;
+            three.position = 2;
+            three.buttonPress = '3';
+            SelectSlotOnButtonPress.Add(three);
+            PressableSlot four;
+            four.position = 3;
+            four.buttonPress = '4';
+            SelectSlotOnButtonPress.Add(four);
             foreach (PressableSlot press in SelectSlotOnButtonPress)
             {
                 if (!slotPress.ContainsKey(press.buttonPress.ToString()))
