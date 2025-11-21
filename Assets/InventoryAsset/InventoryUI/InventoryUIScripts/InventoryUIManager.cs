@@ -12,6 +12,7 @@ namespace InventorySystem
     public class InventoryUIManager : MonoBehaviour
     {
         private GameObject previouslyHighlighted;
+        private int slotPosition = 0;
 
         // Inventory UI Configuration
         [Header("========[ Inventory UI Setup ]========")]
@@ -170,6 +171,8 @@ namespace InventorySystem
         private Dictionary<Vector2, GameObject> VectorPositionToSlotDict = new Dictionary<Vector2, GameObject>();
         private Dictionary<int, GameObject> positionToSlotDict = new Dictionary<int, GameObject>();
 
+        InventoryItem activeItem;
+
         public void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
@@ -183,6 +186,7 @@ namespace InventorySystem
             UpdateInventoryUI();
             UI = InventoryController.instance.GetUI();
 
+            activeItem = new InventoryItem(new ItemInitializer(false));
 
         }
 
@@ -449,6 +453,7 @@ namespace InventorySystem
         {
             Slot slotInstance = slot.GetComponent<Slot>();
             InventoryItem item = slotInstance.GetItem();
+            activeItem = item;
             if (item.GetPressable() && clickable || item.GetIsNull() && clickable || item.GetPressable() && overRide || overRide && item.GetIsNull())
             {
                 if (previouslyHighlighted != null)
@@ -464,6 +469,11 @@ namespace InventorySystem
                 slotInstance.GetItem().Selected();
                 previouslyHighlighted = slot;
             }
+        }
+
+        public InventoryItem GetActiveItem()
+        {
+            return activeItem;
         }
 
         /// <summary>
@@ -511,8 +521,8 @@ namespace InventorySystem
         /// </summary>
         public void ResetHighlight()
         {
-            UnHighlight(previouslyHighlighted);
-            previouslyHighlighted = null;
+            //UnHighlight(previouslyHighlighted);
+            //previouslyHighlighted = null;
         }
 
         /// <summary>
@@ -522,7 +532,7 @@ namespace InventorySystem
         {
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                ResetHighlight();
+                //ResetHighlight();
             }
             if (Input.anyKeyDown)
             {
@@ -530,6 +540,7 @@ namespace InventorySystem
                 if (slotPress.ContainsKey(input))
                 {
                     int position = slotPress[input];
+                    slotPosition = position;
                     SetPressed(positionToSlotDict[position], true);
                 }
             }
@@ -580,7 +591,7 @@ namespace InventorySystem
         /// </summary>
         private void InitSlotPressDict()
         {
-            PressableSlot one;
+            /*PressableSlot one;
             one.position = 0;
             one.buttonPress = '1';
             SelectSlotOnButtonPress.Add(one);
@@ -595,7 +606,7 @@ namespace InventorySystem
             PressableSlot four;
             four.position = 3;
             four.buttonPress = '4';
-            SelectSlotOnButtonPress.Add(four);
+            SelectSlotOnButtonPress.Add(four);*/
             foreach (PressableSlot press in SelectSlotOnButtonPress)
             {
                 if (!slotPress.ContainsKey(press.buttonPress.ToString()))
