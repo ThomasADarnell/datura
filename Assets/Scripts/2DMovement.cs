@@ -3,37 +3,34 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using InventorySystem;
-// using static UnityEditor.Progress;
+// using static UnityEditor.Progress;  // can only be used in editor
 using Unity.VisualScripting;
 using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
-    // --- Existing Public Variables ---
-    public float moveSpeed = 5f;
-    private float attackTimer = 0f;
-    public float attackDuration = 0.25f;
-    public float distanceToAttack = 2f; //How close you need to be to do damage
+    // --- Public Variables ---
+    public float moveSpeed = 5f;  // default player speed
+    private float attackTimer = 0f;  // attack cooldown
+    public float attackDuration = 0.25f;  // attack duration
+    public float distanceToAttack = 2f; // attack range
 
-    // --- NEW Dash Variables ---
     [Header("Dash Settings")]
-    public float dashSpeed = 15f; // How fast the player dashes
-    public float dashingTime = 0.15f; // How long the dash lasts
-    public float dashCooldown = 1.0f; // Time between dashes (in seconds)
+    public float dashSpeed = 15f; // dash speed
+    public float dashingTime = 0.15f; // dash duration
+    public float dashCooldown = 1.0f; // time between dashes
 
     // --- Private Variables ---
     private Rigidbody2D rb;
     private Animator anim;
     private Vector2 moveInput;
-    private bool canMove = true; // Used for general movement restrictions (knockback, dashing)
-    private bool isDashing = false; // NEW: Flag for the active dash duration
-    private bool canDash = true; // NEW: Flag for the dash cooldown
+    private bool canMove = true; // used to see if player can move or is interacting with hazard
+    private bool isDashing = false; // used to see if player is dashing
+    private bool canDash = true; // dash cooldown
 
     private Vector2 lastMoveDir = Vector2.down;
     private bool isAttacking = false;
     private Health health;
-
-    // ... (Your other existing variables and enums remain here)
 
     private enum FacingDirection
     {
@@ -67,20 +64,16 @@ public class PlayerMovement : MonoBehaviour
         health = FindAnyObjectByType<Health>();
     }
 
-    // Existing OnMove input action
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
     }
 
-    // --- NEW: Input Action for Dashing ---
-    // You will need to bind this to a key (e.g., Left Shift or Space) in your Input Actions Asset.
     public void OnDash(InputAction.CallbackContext context)
     {
         if (context.performed && canDash && !isDashing && canMove)
         {
-            // Only dash if the button is pressed, not during cooldown, 
-            // not currently dashing, and not restricted by knockback.
+            // Only dash after player hits button & after cooldown ends
             StartCoroutine(DashRoutine());
         }
     }
@@ -96,8 +89,6 @@ public class PlayerMovement : MonoBehaviour
         EnemyManager enemyManager = FindObjectsByType<EnemyManager>(FindObjectsSortMode.None)[0];
         List<EnemyBaseBehavior> butterflies = enemyManager.Enemies;
         List<EnemyBaseBehavior> butterfliesToDamage = new List<EnemyBaseBehavior>();
-
-        // ... (Your existing OnUse logic remains here)
 
         float lx = anim.GetFloat("LastX");
         float ly = anim.GetFloat("LastY");
@@ -221,7 +212,6 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Existing attack timer logic
         if (attackTimer > 0)
         {
             attackTimer -= Time.fixedDeltaTime;
@@ -259,66 +249,37 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (isDashing)
         {
-            // IMPORTANT: If dashing, we don't want to overwrite the dash velocity in FixedUpdate.
-            // We let the velocity applied in the Coroutine take precedence.
-            // If you use a very short dash time, you might want to consider setting a constant velocity here
-            // based on the direction stored at the start of the dash. For now, we just skip regular movement.
         }
     }
 
-    // --- NEW: Dash Coroutine ---
     private IEnumerator DashRoutine()
     {
-        // 1. Start Dash & Setup
-        canDash = false; // Start cooldown
-        isDashing = true; // Block regular movement
+        canDash = false;
+        isDashing = true;
 
-        // Determine dash direction
-        // Use current moveInput if moving, otherwise use the last facing direction
+        // Dash facing last known player direction
         Vector2 dashDirection = (moveInput.sqrMagnitude > 0.01f) ? moveInput.normalized : lastMoveDir;
 
-        // Stop current velocity (optional, but makes the dash feel snappier)
-        rb.linearVelocity = Vector2.zero;
-
-        // 2. Apply Dash Velocity
         rb.linearVelocity = dashDirection * dashSpeed;
 
-        // 3. Wait for Dash Duration
+        // Dash for only a set time
         yield return new WaitForSeconds(dashingTime);
-
-        // 4. End Dash
         isDashing = false;
 
-        // Stop the fast dash velocity (or transition smoothly back to walk speed)
-        // Set velocity to the normal speed in the current direction, or zero if not holding an input
-        if (canMove) // Only adjust velocity if not under knockback restriction
+        // Transition from dash speed to normal speed
+        if (canMove)  // can walk
         {
             rb.linearVelocity = moveInput * moveSpeed;
         }
-        else
-        {
-            // If we are restricted (e.g., knocked back), just stop the dash velocity
-            rb.linearVelocity = Vector2.zero;
-        }
 
-
-        // 5. Start Cooldown
+        // Dash cooldown to prevent spamming
         yield return new WaitForSeconds(dashCooldown);
-
-        // 6. End Cooldown
         canDash = true;
     }
 
-    // Existing Knockback logic
+
     public void ApplyKnockback(Vector2 direction, float force, float duration)
     {
-        // Stop the dash routine if knockback is applied mid-dash
-        if (isDashing)
-        {
-            StopCoroutine(nameof(DashRoutine));
-            isDashing = false; // Immediately end the dash
-        }
-
         // Stop any existing knockback coroutine before starting a new one
         StopCoroutine(KnockbackRoutine(direction, force, duration));
         StartCoroutine(KnockbackRoutine(direction, force, duration));
@@ -328,7 +289,12 @@ public class PlayerMovement : MonoBehaviour
     {
         canMove = false;
 
-        rb.AddForce(direction * force, ForceMode2D.Impulse); // Use Impulse for instant push
+        if (isDashing)
+        {
+            force = dashSpeed * force;
+        }
+
+        rb.AddForce(direction * force, ForceMode2D.Impulse);
 
         yield return new WaitForSeconds(duration);
 
