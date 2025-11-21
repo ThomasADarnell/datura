@@ -43,6 +43,7 @@ public class PlayerHealth : MonoBehaviour
     public void TakeDamage(float dmg)
     {
         health -= dmg;
+        AudioManager.Instance.PlayPlayerHurt();
         ClampHealth();
     }
 
@@ -67,7 +68,14 @@ public class PlayerHealth : MonoBehaviour
         Debug.Log(health);
         if (health <= 0)
         {
-            SceneManager.LoadScene("Kill Screen");
+            Die();
         }
+    }
+
+    private static void Die()
+    {
+        AudioManager.Instance.PlayPlayerDeath();
+        //Animation
+        SceneManager.LoadScene("Kill Screen");
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using InventorySystem;
 using static UnityEditor.Progress;
 using Unity.VisualScripting;
+using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -14,10 +15,12 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Animator anim;
     private Vector2 moveInput;
+    private bool canMove = true; 
+
     private Vector2 lastMoveDir = Vector2.down;
     private bool isAttacking = false;
     private Health health;
-    public float distanceToAttack = 1f; //How close you need to be to do damage
+    public float distanceToAttack = 2f; //How close you need to be to do damage
 
     private enum FacingDirection
     {
@@ -42,6 +45,10 @@ public class PlayerMovement : MonoBehaviour
     }
     void Start()
     {
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody2D>();
+        }
         health = FindAnyObjectByType<Health>();
     }
 
@@ -52,11 +59,23 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnUse(InputAction.CallbackContext context)
     {
-        InventoryUIManager inventory = FindFirstObjectByType<InventoryUIManager>();
-        InventoryItem item = inventory.GetActiveItem();
-        String type = item.GetItemType();
-        Debug.Log("k"+type+"k");
-        if (type.IsUnityNull())
+        isAttacking = true;
+        attackTimer = attackDuration;
+        EnemyManager enemyManager = FindObjectsByType<EnemyManager>(FindObjectsSortMode.None)[0];
+        List<EnemyBaseBehavior> butterflies = enemyManager.Enemies;
+        List<EnemyBaseBehavior> butterfliesToDamage = new List<EnemyBaseBehavior>();
+
+        float lx = anim.GetFloat("LastX");
+        float ly = anim.GetFloat("LastY");
+        float facingAngle;
+        if (lx > 0.5f) facingAngle = 0f;        // right
+        else if (lx < -0.5f) facingAngle = 180f; // left
+        else if (ly > 0.5f) facingAngle = 90f;   // up
+        else facingAngle = 270f;                 // down
+
+        AudioManager.Instance.PlayPlayerStab();
+
+        foreach (EnemyBaseBehavior butterfly in butterflies)
         {
 
             isAttacking = true;
@@ -101,7 +120,40 @@ public class PlayerMovement : MonoBehaviour
             {
                 enemyManager.enemyDamaged(butterfly);
             }
-            FlowerBoss[] flowers = FindObjectsByType<FlowerBoss>(FindObjectsSortMode.None);
+        }
+
+        // Process damage after the loop
+        foreach (EnemyBaseBehavior butterfly in butterfliesToDamage)
+        {
+            enemyManager.enemyDamaged(butterfly);
+        }
+        
+        // Handle Wheeler enemies
+        Wheeler[] wheelers = FindObjectsByType<Wheeler>(FindObjectsSortMode.None);
+        foreach (Wheeler wheeler in wheelers)
+        {
+            if (wheeler == null) continue;
+            float dist = Vector2.Distance(this.transform.position, wheeler.transform.position);
+            if (dist > distanceToAttack) continue;
+
+            double projection = CheckProjection(this.transform.position, wheeler.transform.position);
+            float angleDiff = Mathf.Abs(Mathf.DeltaAngle(facingAngle, (float)projection));
+            if (angleDiff <= 45f)
+            {
+                if (this.ExplosionEffectPrefab)
+                {
+                    GameObject effect = Instantiate(this.ExplosionEffectPrefab, wheeler.transform.position, Quaternion.identity);
+                    Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
+                }
+                wheeler.TakeDamage(1);
+            }
+            else
+            {
+                Debug.Log("Not facing Wheeler; angleDiff=" + angleDiff);
+            }
+        }
+        
+        FlowerBoss[] flowers = FindObjectsByType<FlowerBoss>(FindObjectsSortMode.None);
 
             if (lx > 0.5f) facingAngle = 0f;        // right
             else if (lx < -0.5f) facingAngle = 180f; // left
@@ -156,25 +208,44 @@ public class PlayerMovement : MonoBehaviour
 
         anim.SetBool("isAttacking", isAttacking);
 
-        rb.linearVelocity = moveInput * moveSpeed;
-
-        bool isMoving = moveInput.sqrMagnitude > 0.01f;
-
-        if (isMoving)
+        if (canMove)
         {
-            lastMoveDir = moveInput.normalized;
-            anim.SetFloat("MoveX", moveInput.x);
-            anim.SetFloat("MoveY", moveInput.y);
-        }
-        else
-        {
-            anim.SetFloat("MoveX", lastMoveDir.x);
-            anim.SetFloat("MoveY", lastMoveDir.y);
-        }
+            rb.linearVelocity = moveInput * moveSpeed;
 
-        anim.SetBool("isMoving", isMoving);
-        anim.SetFloat("LastX", lastMoveDir.x);
-        anim.SetFloat("LastY", lastMoveDir.y);
+            bool isMoving = moveInput.sqrMagnitude > 0.01f;
+
+            if (isMoving)
+            {
+                lastMoveDir = moveInput.normalized;
+                anim.SetFloat("MoveX", moveInput.x);
+                anim.SetFloat("MoveY", moveInput.y);
+            }
+            else
+            {
+                anim.SetFloat("MoveX", lastMoveDir.x);
+                anim.SetFloat("MoveY", lastMoveDir.y);
+            }
+
+            anim.SetBool("isMoving", isMoving);
+            anim.SetFloat("LastX", lastMoveDir.x);
+            anim.SetFloat("LastY", lastMoveDir.y);
+        }
+    }
+    public void ApplyKnockback(Vector2 direction, float force, float duration)
+    {
+        // Stop any existing knockback coroutine before starting a new one
+        StopCoroutine(KnockbackRoutine(direction, force, duration)); 
+        StartCoroutine(KnockbackRoutine(direction, force, duration));
     }
 
+    private IEnumerator KnockbackRoutine(Vector2 direction, float force, float duration)
+    {
+        canMove = false; 
+
+        rb.AddForce(direction * force, ForceMode2D.Impulse); // Use Impulse for instant push
+
+        yield return new WaitForSeconds(duration);
+
+        canMove = true;
+    }
 }
