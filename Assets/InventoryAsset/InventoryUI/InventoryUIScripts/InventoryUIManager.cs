@@ -476,6 +476,11 @@ namespace InventorySystem
             return activeItem;
         }
 
+        public int GetSlotPosition()
+        {
+            return slotPosition;
+        }
+
         /// <summary>
         /// Highlights the given slot and unhighlights the previous slot. Assigns selected image for slot or makes slot grey if selected image is null
         /// </summary>
