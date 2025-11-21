@@ -16908,63 +16908,6 @@ Transform:
   - {fileID: 1409334789}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &826572307
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 320822919242524937, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_Name
-      value: Black Locust Tree
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 19.020481
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 59.203747
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
 --- !u!1 &837139190
 GameObject:
   m_ObjectHideFlags: 0
@@ -19173,6 +19116,10 @@ PrefabInstance:
       propertyPath: m_ActionEvents.Array.data[22].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 5147545513457807351, guid: b12fe7b4d959fff4fb0e934f8bf77738, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5604205450007549184, guid: b12fe7b4d959fff4fb0e934f8bf77738, type: 3}
       propertyPath: m_Size.x
       value: 0.4469666
@@ -19192,6 +19139,18 @@ PrefabInstance:
     - target: {fileID: 6240096567394906780, guid: b12fe7b4d959fff4fb0e934f8bf77738, type: 3}
       propertyPath: m_Name
       value: Main Guy
+      objectReference: {fileID: 0}
+    - target: {fileID: 6364205670158454784, guid: b12fe7b4d959fff4fb0e934f8bf77738, type: 3}
+      propertyPath: health
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6364205670158454784, guid: b12fe7b4d959fff4fb0e934f8bf77738, type: 3}
+      propertyPath: maxHealth
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6364205670158454784, guid: b12fe7b4d959fff4fb0e934f8bf77738, type: 3}
+      propertyPath: maxTotalHealth
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21258,63 +21217,6 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
---- !u!1001 &1445921239
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 320822919242524937, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_Name
-      value: Black Locust Tree (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 36.394962
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 59.5782
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193048516869763526, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 28f65c09e1ab4df4f9891963b03c88fa, type: 3}
 --- !u!1001 &1596754992
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31059,5 +30961,3 @@ SceneRoots:
   - {fileID: 371235498}
   - {fileID: 942609857}
   - {fileID: 767415228}
-  - {fileID: 826572307}
-  - {fileID: 1445921239}
