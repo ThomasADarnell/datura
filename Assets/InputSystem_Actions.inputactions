@@ -971,6 +971,17 @@
                 },
                 {
                     "name": "",
+                    "id": "ec033fa0-2c28-4b5d-9c99-a21362333039",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Interact/Use",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "1ae411cc-b235-446f-b6bc-5523a0c3bf0b",
                     "path": "<Gamepad>/buttonNorth",
                     "interactions": "",

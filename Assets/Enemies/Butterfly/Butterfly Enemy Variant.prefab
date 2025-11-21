@@ -56,6 +56,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Butterfly Enemy Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 8445197267184879293, guid: af2dc178b0ebe3c4497b202ff988224a, type: 3}
+      propertyPath: m_SortingLayer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8445197267184879293, guid: af2dc178b0ebe3c4497b202ff988224a, type: 3}
+      propertyPath: m_SortingOrder
+      value: 51
+      objectReference: {fileID: 0}
+    - target: {fileID: 8445197267184879293, guid: af2dc178b0ebe3c4497b202ff988224a, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8445197267184879293, guid: af2dc178b0ebe3c4497b202ff988224a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 2623ae90f577a3d4aa99b62cdbf94f81, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
