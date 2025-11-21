@@ -2,6 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using InventorySystem;
+using static UnityEditor.Progress;
+using Unity.VisualScripting;
 using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
@@ -74,24 +77,48 @@ public class PlayerMovement : MonoBehaviour
 
         foreach (EnemyBaseBehavior butterfly in butterflies)
         {
-            if (butterfly == null) continue;
-            float dist = Vector2.Distance(this.transform.position, butterfly.transform.position);
-            if (dist > distanceToAttack) continue;
 
-            double projection = CheckProjection(this.transform.position, butterfly.transform.position);
-            float angleDiff = Mathf.Abs(Mathf.DeltaAngle(facingAngle, (float)projection));
-            if (angleDiff <= 45f)
+            isAttacking = true;
+            attackTimer = attackDuration;
+            EnemyManager enemyManager = FindObjectsByType<EnemyManager>(FindObjectsSortMode.None)[0];
+            List<EnemyBaseBehavior> butterflies = enemyManager.Enemies;
+            List<EnemyBaseBehavior> butterfliesToDamage = new List<EnemyBaseBehavior>();
+
+            float lx = anim.GetFloat("LastX");
+            float ly = anim.GetFloat("LastY");
+            float facingAngle;
+            if (lx > 0.5f) facingAngle = 0f;        // right
+            else if (lx < -0.5f) facingAngle = 180f; // left
+            else if (ly > 0.5f) facingAngle = 90f;   // up
+            else facingAngle = 270f;                 // down
+
+            foreach (EnemyBaseBehavior butterfly in butterflies)
             {
-                if (this.ExplosionEffectPrefab)
+                if (butterfly == null) continue;
+                float dist = Vector2.Distance(this.transform.position, butterfly.transform.position);
+                if (dist > distanceToAttack) continue;
+
+                double projection = CheckProjection(this.transform.position, butterfly.transform.position);
+                float angleDiff = Mathf.Abs(Mathf.DeltaAngle(facingAngle, (float)projection));
+                if (angleDiff <= 45f)
                 {
-                    GameObject effect = Instantiate(this.ExplosionEffectPrefab, butterfly.transform.position, Quaternion.identity);
-                    Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
+                    if (this.ExplosionEffectPrefab)
+                    {
+                        GameObject effect = Instantiate(this.ExplosionEffectPrefab, butterfly.transform.position, Quaternion.identity);
+                        Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
+                    }
+                    butterfliesToDamage.Add(butterfly);
                 }
-                butterfliesToDamage.Add(butterfly);
+                else
+                {
+                    Debug.Log("Not facing target; angleDiff=" + angleDiff);
+                }
             }
-            else
+
+            // Process damage after the loop
+            foreach (EnemyBaseBehavior butterfly in butterfliesToDamage)
             {
-                Debug.Log("Not facing target; angleDiff=" + angleDiff);
+                enemyManager.enemyDamaged(butterfly);
             }
         }
 
@@ -128,30 +155,42 @@ public class PlayerMovement : MonoBehaviour
         
         FlowerBoss[] flowers = FindObjectsByType<FlowerBoss>(FindObjectsSortMode.None);
 
-        if (lx > 0.5f) facingAngle = 0f;        // right
-        else if (lx < -0.5f) facingAngle = 180f; // left
-        else if (ly > 0.5f) facingAngle = 90f;  // up
-        else facingAngle = 270f;               // down
+            if (lx > 0.5f) facingAngle = 0f;        // right
+            else if (lx < -0.5f) facingAngle = 180f; // left
+            else if (ly > 0.5f) facingAngle = 90f;  // up
+            else facingAngle = 270f;               // down
 
-        foreach (FlowerBoss flower in flowers)
-        {
-            float dist = Vector2.Distance(this.transform.position, flower.transform.position);
-            if (dist > distanceToAttack) continue;
-
-            double projection = CheckProjection(this.transform.position, flower.transform.position);
-            float angleDiff = Mathf.Abs(Mathf.DeltaAngle(facingAngle, (float)projection));
-            if (angleDiff <= 45f)
+            foreach (FlowerBoss flower in flowers)
             {
-                if (this.ExplosionEffectPrefab)
+                float dist = Vector2.Distance(this.transform.position, flower.transform.position);
+                if (dist > distanceToAttack) continue;
+
+                double projection = CheckProjection(this.transform.position, flower.transform.position);
+                float angleDiff = Mathf.Abs(Mathf.DeltaAngle(facingAngle, (float)projection));
+                if (angleDiff <= 45f)
                 {
-                    GameObject effect = Instantiate(this.ExplosionEffectPrefab, flower.transform.position, Quaternion.identity);
-                    Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
+                    if (this.ExplosionEffectPrefab)
+                    {
+                        GameObject effect = Instantiate(this.ExplosionEffectPrefab, flower.transform.position, Quaternion.identity);
+                        Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
+                    }
+                    flower.TakeDamage(1);
                 }
-                flower.TakeDamage(1);
+                else
+                {
+                    Debug.Log("Not facing target; angleDiff=" + angleDiff);
+                }
             }
-            else
+        }
+        else if(type == "Apple")
+        {
+            PlayerHealth playerHealth = FindAnyObjectByType<PlayerHealth>();
+            InventoryController control = FindAnyObjectByType<InventoryController>();
+            if (playerHealth != null)
             {
-                Debug.Log("Not facing target; angleDiff=" + angleDiff);
+                playerHealth.Heal(3);
+                try { control.RemoveItem("Hotbar", item); } catch { }
+                    
             }
         }
     }
