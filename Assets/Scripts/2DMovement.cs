@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using InventorySystem;
-using static UnityEditor.Progress;
+// using static UnityEditor.Progress;
 using Unity.VisualScripting;
 using System.Collections;
 
