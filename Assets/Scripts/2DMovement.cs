@@ -162,6 +162,36 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
+            LocustBehavior[] trees = FindObjectsByType<LocustBehavior>(FindObjectsSortMode.None);
+            foreach (LocustBehavior tree in trees)
+            {
+                if (tree == null) continue;
+                float dist = Vector2.Distance(this.transform.position, tree.transform.position);
+                if (dist > distanceToAttack) continue;
+
+                double projection = CheckProjection(this.transform.position, tree.transform.position);
+                float angleDiff = Mathf.Abs(Mathf.DeltaAngle(facingAngle, (float)projection));
+                if (angleDiff <= 45f)
+                {
+                    if (this.ExplosionEffectPrefab)
+                    {
+                        GameObject effect = Instantiate(this.ExplosionEffectPrefab, tree.transform.position, Quaternion.identity);
+                        Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
+                    }
+                    tree.TakeDamage(1);
+                    int health = tree.health;
+                    health -= 1;
+                    if (health < 0)
+                    {
+                        Destroy(tree.gameObject);
+                    }
+                }
+                else
+                {
+                    Debug.Log("Not facing Wheeler; angleDiff=" + angleDiff);
+                }
+            }
+
             FlowerBoss[] flowers = FindObjectsByType<FlowerBoss>(FindObjectsSortMode.None);
 
             if (lx > 0.5f) facingAngle = 0f;        // right

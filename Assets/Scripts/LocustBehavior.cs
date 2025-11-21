@@ -8,6 +8,8 @@ public class LocustBehavior : MonoBehaviour
     public GameObject WestRoot;
     public GameObject EastRoot;
 
+    public int health = 2;
+
     public float damageCooldown = 2f;
 
     protected float nextDamageTime = 0f;
@@ -17,15 +19,45 @@ public class LocustBehavior : MonoBehaviour
     public float totalDuration = 1.0f; // Total time for the entire cycle (out and back)
 
     private Vector3 startPosition;
+    public float moveSpeed = .1f; // Adjust this speed as needed
+    private Transform playerTransform; // Reference to the player's transform
+
+
+    private Rigidbody2D rb;
+
     void Start()
     {
+        // Get the Rigidbody2D component from the same GameObject
+        rb = GetComponent<Rigidbody2D>();
+        if (rb == null)
+        {
+            Debug.LogError("Rigidbody2D component missing! Add a Rigidbody2D to the enemy GameObject.");
+        }
 
+        // Find the player object in the scene using its Tag ("Player")
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null)
+        {
+            playerTransform = playerObject.transform;
+        }
+        else
+        {
+            Debug.LogError("Player object not found! Make sure the player has the 'Player' tag.");
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
+        // --- Movement Logic in Update ---
+        if (playerTransform != null && rb != null)
+        {
+            // Calculate the direction from the enemy to the player
+            Vector2 directionToPlayer = (playerTransform.position - transform.position).normalized;
 
+            // --- Use Rigidbody2D.velocity to move the object ---
+            // The physics engine handles collisions automatically when using velocity
+            rb.linearVelocity = directionToPlayer * moveSpeed;
+        }
     }
 
     protected void OnTriggerEnter2D(Collider2D player)
@@ -100,6 +132,16 @@ public class LocustBehavior : MonoBehaviour
         direction.transform.localPosition = startPosition; // Ensure it returns home exactly
 
         direction.SetActive(false);
+    }
+
+    public int GetHealth()
+    {
+        return health;
+    }
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
     }
 
 }
