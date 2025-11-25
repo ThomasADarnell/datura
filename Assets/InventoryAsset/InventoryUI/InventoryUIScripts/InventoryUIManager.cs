@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace InventorySystem
 {
@@ -333,7 +334,7 @@ namespace InventorySystem
                     GameObject slotObjectInstance = Instantiate(slot, rectTransform);
                     slotObjectInstance.GetComponent<RectTransform>().localPosition = placeMentPos;
                     slotObjectInstance.GetComponent<RectTransform>().sizeDelta = slotSize;
-                    slotObjectInstance.GetComponent<Image>().sprite = SlotImage.regular;
+                    slotObjectInstance.GetComponent<UnityEngine.UI.Image>().sprite = SlotImage.regular;
                     Slot slotInstance = slotObjectInstance.GetComponent<Slot>();
                     slotInstance.GetItemHolder().GetComponent<DragItem>().Initiailize();
                     slotInstance.SetChildImageSize(new Vector2(slotSize.x * ItemImageSizeFactor.x, slotSize.y * ItemImageSizeFactor.y));
@@ -475,6 +476,13 @@ namespace InventorySystem
         {
             return activeItem;
         }
+        public void SetActiveItem()
+        {
+            GameObject slot = positionToSlotDict[slotPosition];
+            Slot slotInstance = slot.GetComponent<Slot>();
+            InventoryItem item = slotInstance.GetItem();
+            activeItem = item;
+        }
 
         public int GetSlotPosition()
         {
@@ -494,7 +502,7 @@ namespace InventorySystem
             }
             else
             {
-                slotInstance.GetComponent<Image>().sprite = SlotImage.selected;
+                slotInstance.GetComponent<UnityEngine.UI.Image>().sprite = SlotImage.selected;
             }
             previouslyHighlighted = slot;
 
@@ -515,7 +523,7 @@ namespace InventorySystem
                 }
                 else
                 {
-                    slot.GetComponent<Image>().sprite = SlotImage.regular;
+                    slot.GetComponent<UnityEngine.UI.Image>().sprite = SlotImage.regular;
                 }
 
             }

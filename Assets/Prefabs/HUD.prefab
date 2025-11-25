@@ -1542,6 +1542,17 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     isNull: 0
+  - itemType: ProtectiveGear
+    itemImage: {fileID: 21300000, guid: 395f6b9556f14704790df6035be6ee3a, type: 3}
+    maxStackAmount: 1
+    displayItemAmount: 0
+    draggable: 0
+    pressable: 1
+    RelatedGameObject: {fileID: 266041930427630607, guid: 3ba8453794e7edd428d40055eaa4440c, type: 3}
+    itemAction:
+      m_PersistentCalls:
+        m_Calls: []
+    isNull: 0
   initializeInventory:
   - inventoryName: Hotbar
     rows: 1
