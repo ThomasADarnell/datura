@@ -129,7 +129,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.8, y: 0.8}
+    oldSize: {x: 1.0666667, y: 1.0666667}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -201,6 +201,6 @@ MonoBehaviour:
   flyPrefab: {fileID: 50725939065375416, guid: 2be365c5990a7cb44820870ea1f562fc, type: 3}
   minFliesPerSpawn: 1
   maxFliesPerSpawn: 3
-  spawnInterval: 10
+  spawnInterval: 15
   spawnRadius: 2
   vaseHealth: 3
