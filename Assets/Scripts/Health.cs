@@ -30,7 +30,10 @@ public class Health : MonoBehaviour
     {
         currentHealth = Mathf.Max(currentHealth - amount, 0);
         PlayerData.Instance.currentHealth = currentHealth;  // update global
-        AudioManager.Instance.PlayPlayerHurt();
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayPlayerHurt();
+        }
 
         heartDisplay.UpdateHearts(currentHealth, maxHealth);
         if (currentHealth <= 0) {
@@ -48,7 +51,10 @@ public class Health : MonoBehaviour
 
     private static void Die()
     {
-        AudioManager.Instance.PlayPlayerDeath();
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayPlayerDeath();
+        }
         //Animation
         SceneManager.LoadScene("Death");
     }

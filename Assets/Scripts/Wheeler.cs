@@ -232,7 +232,7 @@ public class Wheeler : EnemyBaseBehavior
         currentHealth -= damage;
         
         Debug.Log($"[{gameObject.name}] Wheeler took {damage} damage. Health: {currentHealth}/{maxHealth}");
-        
+
         if (anim != null)
         {
             anim.SetBool("WasDamaged", true);
@@ -241,8 +241,11 @@ public class Wheeler : EnemyBaseBehavior
             Invoke(nameof(ResetDamageFlag), 0.5f);
         }
         
-        AudioManager.Instance.PlayEnemyHurt();
-        
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayEnemyHurt();
+        }
+
         if (currentHealth <= 0)
         {
             Die();
@@ -267,9 +270,11 @@ public class Wheeler : EnemyBaseBehavior
             anim.SetBool("IsDead", true);
             anim.SetBool("FinishedCurrentAnim", false);
         }
-        
-        AudioManager.Instance.PlayEnemyDeath();
-        
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayEnemyDeath();
+        }
+
         // Notify enemy manager
         EnemyManager enemyManager = FindFirstObjectByType<EnemyManager>();
         if (enemyManager != null)

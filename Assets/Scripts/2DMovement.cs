@@ -97,8 +97,10 @@ public class PlayerMovement : MonoBehaviour
         else if (lx < -0.5f) facingAngle = 180f; // left
         else if (ly > 0.5f) facingAngle = 90f;   // up
         else facingAngle = 270f;                // down
-
-        AudioManager.Instance.PlayPlayerStab();
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayPlayerStab();
+        }
 
         InventoryUIManager inventory = FindFirstObjectByType<InventoryUIManager>();
         InventoryItem item = inventory.GetActiveItem();

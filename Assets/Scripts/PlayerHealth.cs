@@ -117,7 +117,10 @@ public class PlayerHealth : MonoBehaviour
 
     private static void Die()
     {
-        AudioManager.Instance.PlayPlayerDeath();
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayPlayerDeath();
+        }
         //Animation
         SceneManager.LoadScene("Kill Screen");
     }
