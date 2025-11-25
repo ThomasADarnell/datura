@@ -103,6 +103,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         InventoryUIManager inventory = FindFirstObjectByType<InventoryUIManager>();
+        inventory.SetActiveItem();
         InventoryItem item = inventory.GetActiveItem();
         String type = item.GetItemType();
 
@@ -233,7 +234,7 @@ public class PlayerMovement : MonoBehaviour
                 try
                 {
                     control.RemoveItem("Hotbar", item);
-                    control.AddItemPos("Hotbar", new InventoryItem(new ItemInitializer(true)), inventory.GetSlotPosition());
+                    //control.AddItemPos("Hotbar", new InventoryItem(new ItemInitializer(true)), inventory.GetSlotPosition());
                     item = null;
                 }
                 catch { }
