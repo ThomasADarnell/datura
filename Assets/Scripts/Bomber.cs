@@ -3,9 +3,6 @@ using UnityEngine;
 
 public class Bomber : MonoBehaviour
 {
-    [Header("Vase Child Reference")]
-    public GameObject vase; // Reference to the child vase object
-    
     [Header("Spawn Settings")]
     public GameObject flyPrefab; // The fly enemy prefab to spawn
     public int minFliesPerSpawn = 1;
@@ -17,34 +14,18 @@ public class Bomber : MonoBehaviour
     public int vaseHealth = 3; // How many hits before vase breaks
     private int currentVaseHealth;
     
-    private Animator vaseAnimator;
+    private Animator anim;
     private bool isBreaking = false;
     private bool isBroken = false;
     private float nextSpawnTime;
     
     void Start()
     {
-        // Get the vase child if not assigned
-        if (vase == null)
+        // Get animator from this object
+        anim = GetComponent<Animator>();
+        if (anim == null)
         {
-            // Try to find a child named "Vase"
-            Transform vaseTransform = transform.Find("Vase");
-            if (vaseTransform != null)
-            {
-                vase = vaseTransform.gameObject;
-            }
-            else
-            {
-                Debug.LogError("Vase child object not found! Please assign it in the inspector or name the child 'Vase'.");
-                return;
-            }
-        }
-        
-        // Get vase animator
-        vaseAnimator = vase.GetComponent<Animator>();
-        if (vaseAnimator == null)
-        {
-            Debug.LogWarning("Vase does not have an Animator component!");
+            Debug.LogWarning("Bomber does not have an Animator component!");
         }
         
         // Initialize health
@@ -81,15 +62,15 @@ public class Bomber : MonoBehaviour
         // Spawn flies around the vase
         for (int i = 0; i < flyCount; i++)
         {
-            // Calculate random position around the vase
+            // Calculate random position around this vase
             Vector2 randomOffset = Random.insideUnitCircle * spawnRadius;
-            Vector3 spawnPosition = vase.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
+            Vector3 spawnPosition = transform.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
             
             // Spawn the fly
             GameObject fly = Instantiate(flyPrefab, spawnPosition, Quaternion.identity);
             
-            // Optionally parent the fly to this object or leave it independent
-            // fly.transform.parent = transform;
+            // Parent flies under the vase for organization
+            fly.transform.parent = transform;
         }
         
         Debug.Log($"Spawned {flyCount} flies from vase!");
@@ -101,16 +82,18 @@ public class Bomber : MonoBehaviour
         
         currentVaseHealth -= damage;
         
+        Debug.Log($"Vase took {damage} damage! Current health: {currentVaseHealth}/{vaseHealth}");
+        
         if (currentVaseHealth <= 0)
         {
             StartBreaking();
         }
-        else if (currentVaseHealth == vaseHealth / 2) // If at half health
+        else if (currentVaseHealth <= vaseHealth / 2) // If at half health or less
         {
             // Set damaged animation
-            if (vaseAnimator != null)
+            if (anim != null)
             {
-                vaseAnimator.SetBool("Damaged", true);
+                anim.SetBool("Damaged", true);
             }
         }
     }
@@ -122,9 +105,9 @@ public class Bomber : MonoBehaviour
         isBreaking = true;
         
         // Set breaking animation
-        if (vaseAnimator != null)
+        if (anim != null)
         {
-            vaseAnimator.SetBool("Broken", true);
+            anim.SetBool("Broken", true);
         }
         
         // Start breaking coroutine
@@ -143,17 +126,37 @@ public class Bomber : MonoBehaviour
     {
         isBroken = true;
         
-        // Destroy the entire bomber object (including the vase)
+        // Destroy the vase object
         Destroy(gameObject);
+    }
+    
+    // === Animation Event Functions ===
+    // These are called by Animation Events in the vase's animations
+    
+    // Called when the vase breaking animation is complete
+    public void OnVaseBroken()
+    {
+        Debug.Log("Vase breaking animation completed");
+        FinishBreaking();
+    }
+    
+    // Called when vase damage animation is complete (optional)
+    public void OnVaseDamaged()
+    {
+        Debug.Log("Vase damage animation completed");
+    }
+    
+    // Called at the start of breaking animation to stop spawning
+    public void OnVaseStartBreaking()
+    {
+        Debug.Log("Vase started breaking");
+        isBreaking = true;
     }
     
     // Gizmos for visualizing spawn radius
     private void OnDrawGizmosSelected()
     {
-        if (vase != null)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(vase.transform.position, spawnRadius);
-        }
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, spawnRadius);
     }
 }
