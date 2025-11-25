@@ -223,6 +223,57 @@ public class PlayerMovement : MonoBehaviour
                     Debug.Log("Not facing target; angleDiff=" + angleDiff);
                 }
             }
+
+            // Handle Bomber vases
+            Bomber[] bombers = FindObjectsByType<Bomber>(FindObjectsSortMode.None);
+            foreach (Bomber bomber in bombers)
+            {
+                if (bomber == null) continue;
+                float dist = Vector2.Distance(this.transform.position, bomber.transform.position);
+                if (dist > distanceToAttack) continue;
+
+                double projection = CheckProjection(this.transform.position, bomber.transform.position);
+                float angleDiff = Mathf.Abs(Mathf.DeltaAngle(facingAngle, (float)projection));
+                if (angleDiff <= 45f)
+                {
+                    if (this.ExplosionEffectPrefab)
+                    {
+                        GameObject effect = Instantiate(this.ExplosionEffectPrefab, bomber.transform.position, Quaternion.identity);
+                        Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
+                    }
+                    bomber.TakeDamage(1);
+                    Debug.Log("Hit bomber vase!");
+                }
+                else
+                {
+                    Debug.Log("Not facing Bomber; angleDiff=" + angleDiff);
+                }
+            }
+
+            // Handle Fly enemies
+            Fly[] flies = FindObjectsByType<Fly>(FindObjectsSortMode.None);
+            foreach (Fly fly in flies)
+            {
+                if (fly == null) continue;
+                float dist = Vector2.Distance(this.transform.position, fly.transform.position);
+                if (dist > distanceToAttack) continue;
+
+                double projection = CheckProjection(this.transform.position, fly.transform.position);
+                float angleDiff = Mathf.Abs(Mathf.DeltaAngle(facingAngle, (float)projection));
+                if (angleDiff <= 45f)
+                {
+                    if (this.ExplosionEffectPrefab)
+                    {
+                        GameObject effect = Instantiate(this.ExplosionEffectPrefab, fly.transform.position, Quaternion.identity);
+                        Destroy(effect, effect.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
+                    }
+                    fly.TakeDamage(1);
+                }
+                else
+                {
+                    Debug.Log("Not facing Fly; angleDiff=" + angleDiff);
+                }
+            }
         }
         else if (type == "Apple")
         {
