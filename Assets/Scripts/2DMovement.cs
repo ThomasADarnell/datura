@@ -234,11 +234,23 @@ public class PlayerMovement : MonoBehaviour
                 try
                 {
                     control.RemoveItem("Hotbar", item);
-                    //control.AddItemPos("Hotbar", new InventoryItem(new ItemInitializer(true)), inventory.GetSlotPosition());
-                    item = null;
                 }
                 catch { }
 
+            }
+        }
+        else if (type == "ProtectiveGear")
+        {
+            PlayerHealth playerHealth = FindAnyObjectByType<PlayerHealth>();
+            InventoryController control = FindAnyObjectByType<InventoryController>();
+            if (playerHealth != null)
+            {
+                playerHealth.awesomeSauce(15f);
+                try
+                {
+                    control.RemoveItem("Hotbar", item);
+                }
+                catch { }
             }
         }
     }
