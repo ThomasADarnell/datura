@@ -31,6 +31,7 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField]
     private float maxTotalHealth;
     private Color originalColor;
+    private bool isInvincable = false;
 
     public float Health { get { return health; } }
     public float MaxHealth { get { return maxHealth; } }
@@ -59,18 +60,32 @@ public class PlayerHealth : MonoBehaviour
         ClampHealth();
     }
 
+    public void awesomeSauce(float time)
+    {
+        isInvincable = true;
+        StartCoroutine(invulnerable(time));
+    }
+
+    public IEnumerator invulnerable(float time)
+    {
+        yield return new WaitForSeconds(time);
+        isInvincable = false;
+    }
+
     public void TakeDamage(float dmg)
     {
-        health -= dmg;
-        if (AudioManager.Instance != null)
+        if (!isInvincable)
         {
-            AudioManager.Instance.PlayPlayerHurt();
-        }
-        ClampHealth();
-        if (health > 0)
-        {
-            // Start the color flash coroutine instead of using a while loop
-            StartCoroutine(DelayColor(.25f)); // Flash for 1 second
+            health -= dmg;
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayPlayerHurt();
+            }
+            ClampHealth();
+            if (health > 0)
+            {
+                StartCoroutine(DelayColor(.25f)); // Flash for 1 second
+            }
         }
     }
     public IEnumerator DelayColor(float time)
