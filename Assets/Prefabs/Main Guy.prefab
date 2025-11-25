@@ -244,6 +244,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: c4046718-c19b-402f-af4e-7644a9a31a33
     m_ActionName: '2D/Drop[/Keyboard/downArrow,/Keyboard/s]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cdd5ced2-4e24-4940-aa31-1855e4484344
+    m_ActionName: '2D/Dash[/Keyboard/space]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: 2D
@@ -314,7 +318,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.66, y: 0.66}
+    oldSize: {x: 1.03125, y: 1.03125}
     newSize: {x: 1.03125, y: 1.03125}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -337,6 +341,9 @@ MonoBehaviour:
   moveSpeed: 3
   attackDuration: 0.25
   distanceToAttack: 1
+  dashSpeed: 15
+  dashingTime: 0.15
+  dashCooldown: 1
   ExplosionEffectPrefab: {fileID: 1967835574231978638, guid: 3e196c9e632c76841a71cb6e2dc6d010, type: 3}
 --- !u!114 &5147545513457807351
 MonoBehaviour:
@@ -388,6 +395,8 @@ MonoBehaviour:
   health: 6
   maxHealth: 6
   maxTotalHealth: 6
+  spriteRenderer: {fileID: 0}
+  warningColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &8721513046624135725
 GameObject:
   m_ObjectHideFlags: 0
@@ -498,7 +507,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: -1
+  m_RendererIndex: 1
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
