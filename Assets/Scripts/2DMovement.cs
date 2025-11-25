@@ -24,9 +24,9 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Animator anim;
     private Vector2 moveInput;
-    private bool canMove = true; // used to see if player can move or is interacting with hazard
+    public bool canMove = true; // used to see if player can move or is interacting with hazard
     private bool isDashing = false; // used to see if player is dashing
-    private bool canDash = true; // dash cooldown
+    public bool canDash = true; // dash cooldown
 
     private Vector2 lastMoveDir = Vector2.down;
     private bool isAttacking = false;
@@ -319,8 +319,15 @@ public class PlayerMovement : MonoBehaviour
 
         anim.SetBool("isAttacking", isAttacking);
 
+
+        if (!canMove && !canDash && !isDashing)
+        {
+            rb.linearVelocity = Vector2.zero;
+            anim.SetBool("isMoving", false);
+            // Additional logic to freeze animations if necessary could go here
+        }
         // Only move if not restricted AND not currently dashing
-        if (canMove && !isDashing)
+        else if (canMove && !isDashing)
         {
             rb.linearVelocity = moveInput * moveSpeed;
 
