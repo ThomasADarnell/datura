@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
     // --- Public Variables ---
     public float moveSpeed = 5f;  // default player speed
     private float attackTimer = 0f;  // attack cooldown
-    public float attackDuration = 3f;  // attack cooldown duration (time between attacks)
+    public float attackDuration = 1f;  // attack cooldown duration (time between attacks)
     public float distanceToAttack = 2f; // attack range
 
     [Header("Dash Settings")]
@@ -116,7 +116,7 @@ public class PlayerMovement : MonoBehaviour
         float facingAngle = GetFacingAngle();
         const float attackAngle = 60f; // Changed from 45f to 60f for wider detection
 
-        // Handle butterflies
+        // Handle butterflies spawned by EnemyManager
         EnemyManager[] enemyManagers = FindObjectsByType<EnemyManager>(FindObjectsSortMode.None);
         if (enemyManagers != null && enemyManagers.Length > 0)
         {
@@ -142,7 +142,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // Handle all other enemy types
+        // Handle all manually-placed enemy types
         AttackEnemyType<Wheeler>(facingAngle, attackAngle, (wheeler) => wheeler.TakeDamage(1));
         AttackEnemyType<LocustBehavior>(facingAngle, attackAngle, (tree) => tree.TakeDamage(1));
         AttackEnemyType<FlowerBoss>(facingAngle, attackAngle, (flower) => flower.TakeDamage(1));
