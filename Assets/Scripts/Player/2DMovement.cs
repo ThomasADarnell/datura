@@ -80,8 +80,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Existing OnUse input action
     public void OnUse(InputAction.CallbackContext context)
-    {
-        
+    {   
         // Prevent attacking while dashing or on cooldown
         if (isDashing || attackTimer > 0) return;
 
