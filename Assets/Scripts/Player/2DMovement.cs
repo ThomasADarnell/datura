@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
     // --- Public Variables ---
     public float moveSpeed = 5f;  // default player speed
     private float attackTimer = 0f;  // attack cooldown
-    public float attackDuration = 0.5f;  // attack cooldown duration (time between attacks)
+    public float attackDuration = 3f;  // attack cooldown duration (time between attacks)
     public float distanceToAttack = 2f; // attack range
 
     [Header("Dash Settings")]
@@ -81,6 +81,9 @@ public class PlayerMovement : MonoBehaviour
     // Existing OnUse input action
     public void OnUse(InputAction.CallbackContext context)
     {
+        // Only respond to the performed phase, not started or canceled
+        if (!context.performed) return;
+        
         // Prevent attacking while dashing or on cooldown
         if (isDashing || attackTimer > 0) return;
 
@@ -117,21 +120,29 @@ public class PlayerMovement : MonoBehaviour
         const float attackAngle = 60f; // Changed from 45f to 60f for wider detection
 
         // Handle butterflies
-        EnemyManager enemyManager = FindObjectsByType<EnemyManager>(FindObjectsSortMode.None)[0];
-        List<EnemyBaseBehavior> butterflies = enemyManager.Enemies;
-        List<EnemyBaseBehavior> butterfliesToDamage = new List<EnemyBaseBehavior>();
-
-        foreach (EnemyBaseBehavior butterfly in butterflies)
+        EnemyManager[] enemyManagers = FindObjectsByType<EnemyManager>(FindObjectsSortMode.None);
+        if (enemyManagers != null && enemyManagers.Length > 0)
         {
-            if (TryAttackTarget(butterfly?.transform, facingAngle, attackAngle))
+            EnemyManager enemyManager = enemyManagers[0];
+            List<EnemyBaseBehavior> butterflies = enemyManager.Enemies;
+            
+            if (butterflies != null && butterflies.Count > 0)
             {
-                butterfliesToDamage.Add(butterfly);
-            }
-        }
+                List<EnemyBaseBehavior> butterfliesToDamage = new List<EnemyBaseBehavior>();
 
-        foreach (EnemyBaseBehavior butterfly in butterfliesToDamage)
-        {
-            enemyManager.enemyDamaged(butterfly);
+                foreach (EnemyBaseBehavior butterfly in butterflies)
+                {
+                    if (TryAttackTarget(butterfly?.transform, facingAngle, attackAngle))
+                    {
+                        butterfliesToDamage.Add(butterfly);
+                    }
+                }
+
+                foreach (EnemyBaseBehavior butterfly in butterfliesToDamage)
+                {
+                    enemyManager.enemyDamaged(butterfly);
+                }
+            }
         }
 
         // Handle all other enemy types
@@ -140,6 +151,8 @@ public class PlayerMovement : MonoBehaviour
         AttackEnemyType<FlowerBoss>(facingAngle, attackAngle, (flower) => flower.TakeDamage(1));
         AttackEnemyType<Bomber>(facingAngle, attackAngle, (bomber) => bomber.TakeDamage(1));
         AttackEnemyType<Fly>(facingAngle, attackAngle, (fly) => fly.TakeDamage(1));
+        AttackEnemyType<Sword>(facingAngle, attackAngle, (sword) => sword.TakeDamage(1));
+        AttackEnemyType<Grasshopper>(facingAngle, attackAngle, (grasshopper) => grasshopper.TakeDamage(1));
 
         AttackEnemyType<AngelTrumpet>(facingAngle, attackAngle, (monster) => monster.TakeDamage(1)); 
 
