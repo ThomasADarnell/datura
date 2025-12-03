@@ -165,4 +165,4 @@ MonoBehaviour:
   jumpDuration: 0.5
   jumpCooldown: 2.5
   visualPivot: {fileID: 1269607779166310578}
-  maxArcHeight: 1.5
+  maxArcHeight: 1

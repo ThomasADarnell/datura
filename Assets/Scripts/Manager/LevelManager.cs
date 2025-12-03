@@ -20,6 +20,6 @@ public class LevelManager : MonoBehaviour
     }
     public void LevelTwo()
     {
-        SceneManager.LoadScene("Lvl2");
+        SceneManager.LoadScene("2D Level 2");
     }
 }
