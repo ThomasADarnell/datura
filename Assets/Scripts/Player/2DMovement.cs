@@ -140,6 +140,7 @@ public class PlayerMovement : MonoBehaviour
         AttackEnemyType<FlowerBoss>(facingAngle, attackAngle, (flower) => flower.TakeDamage(1));
         AttackEnemyType<Bomber>(facingAngle, attackAngle, (bomber) => bomber.TakeDamage(1));
         AttackEnemyType<Fly>(facingAngle, attackAngle, (fly) => fly.TakeDamage(1));
+        AttackEnemyType<Sword>(facingAngle, attackAngle, (sword) => sword.TakeDamage(1));
 
         AttackEnemyType<AngelTrumpet>(facingAngle, attackAngle, (monster) => monster.TakeDamage(1)); 
 
