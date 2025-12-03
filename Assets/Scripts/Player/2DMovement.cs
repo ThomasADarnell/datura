@@ -80,10 +80,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Existing OnUse input action
     public void OnUse(InputAction.CallbackContext context)
-    {
-        // Only respond to the performed phase, not started or canceled
-        if (!context.performed) return;
-        
+    {   
         // Prevent attacking while dashing or on cooldown
         if (isDashing || attackTimer > 0) return;
 
