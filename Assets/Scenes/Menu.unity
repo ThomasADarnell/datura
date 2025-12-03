@@ -5875,6 +5875,10 @@ MonoBehaviour:
   buttonClickSound: {fileID: 8300000, guid: f339e097286f02f45b177d3c18389fe2, type: 3}
   pickupSound: {fileID: 8300000, guid: 01890b8b6368750468b5cd7e2ae5b7c1, type: 3}
   powerupSound: {fileID: 8300000, guid: b004c099a98b1b94bb094423eac3ab02, type: 3}
+  prepare_yourself: {fileID: 8300000, guid: e13778f040fb96348b8d6cc12bebecc3, type: 3}
+  loser: {fileID: 8300000, guid: 11ee3e56fcd3445448a024fbcd45c7d7, type: 3}
+  stop: {fileID: 8300000, guid: e59830e7490bd7d429aa126e5a8d5c71, type: 3}
+  rock: {fileID: 8300000, guid: 78ee4b9e027106141ac080c487bf1967, type: 3}
   musicVolume: 0.5
   sfxVolume: 2
   crossfadeDuration: 3

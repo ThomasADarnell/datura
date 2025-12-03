@@ -66,6 +66,8 @@ public class Sword : EnemyBaseBehavior
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         
+        // Note: Spawn taunt is handled by BossSpawn2 script for proper timing
+        
         // Store spawn position for roaming
         spawnPosition = transform.position;
         
@@ -394,6 +396,12 @@ public class Sword : EnemyBaseBehavior
             if (playerHealth != null)
             {
                 playerHealth.TakeDamage(damage);
+                
+                // Play loser taunt when damaging player
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.PlayLoser();
+                }
             }
         }
     }
@@ -539,9 +547,10 @@ public class Sword : EnemyBaseBehavior
                 anim.SetBool("isChargeAttack", false);
             }
             
+            // Play stop audio when damaged
             if (AudioManager.Instance != null)
             {
-                AudioManager.Instance.PlayEnemyHurt();
+                AudioManager.Instance.PlayStop();
             }
             
             // Return to idle after damage animation
