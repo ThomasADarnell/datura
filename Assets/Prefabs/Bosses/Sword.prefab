@@ -175,7 +175,7 @@ MonoBehaviour:
   chargeAttackDamage: 2
   attackCooldown: 2
   chargeAttackCooldown: 5
-  chargeAttackDistance: 5
+  chargeAttackDistance: 3
   chargeAttackDuration: 0.5
 --- !u!61 &8507615031685367118
 BoxCollider2D:
@@ -215,7 +215,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 3.2, y: 3.2}
+    oldSize: {x: 4, y: 4}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

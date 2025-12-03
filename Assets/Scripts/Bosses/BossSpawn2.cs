@@ -8,6 +8,9 @@ public class BossSpawn2 : MonoBehaviour
     public GameObject swordBossPrefab; // Assign the Sword boss prefab in inspector
     public Transform bossSpawnPoint; // Where the boss should spawn
     
+    [Header("Rock Settings")]
+    public GameObject evilRockObject; // Assign the evilassrock object directly in inspector (recommended)
+    
     [Header("Lighting Settings")]
     public float startIntensity = 0.2f;
     public float targetIntensity = 0.02f;
@@ -19,6 +22,9 @@ public class BossSpawn2 : MonoBehaviour
     private bool hasTriggered = false;
     private Light2D globalLight;
     private GameObject spawnedBoss;
+    private GameObject evilRock;
+    private SpriteRenderer rockSpriteRenderer;
+    private Collider2D rockCollider;
     
     void Start()
     {
@@ -38,6 +44,62 @@ public class BossSpawn2 : MonoBehaviour
         {
             Debug.LogWarning($"[{gameObject.name}] No object with 'GlobalLighting' tag found!");
         }
+        
+        // Try to find the evil rock object - first check if assigned in inspector
+        if (evilRockObject == null)
+        {
+            Debug.Log($"[{gameObject.name}] Rock not assigned in inspector, searching by name...");
+            evilRock = GameObject.Find("evilassrock");
+            
+            if (evilRock == null)
+            {
+                // Try with different capitalization
+                evilRock = GameObject.Find("EvilAssRock");
+                
+                if (evilRock == null)
+                {
+                    evilRock = GameObject.Find("Evilassrock");
+                }
+            }
+        }
+        else
+        {
+            evilRock = evilRockObject;
+            Debug.Log($"[{gameObject.name}] Using rock assigned in inspector: {evilRock.name}");
+        }
+        
+        if (evilRock != null)
+        {
+            rockSpriteRenderer = evilRock.GetComponent<SpriteRenderer>();
+            rockCollider = evilRock.GetComponent<Collider2D>();
+            
+            Debug.Log($"[{gameObject.name}] Found rock: {evilRock.name}, SpriteRenderer: {rockSpriteRenderer != null}, Collider: {rockCollider != null}");
+            
+            // Start with rock invisible and collider disabled
+            if (rockSpriteRenderer != null)
+            {
+                Color color = rockSpriteRenderer.color;
+                color.a = 0f;
+                rockSpriteRenderer.color = color;
+            }
+            else
+            {
+                Debug.LogWarning($"[{gameObject.name}] Rock found but has no SpriteRenderer!");
+            }
+            
+            if (rockCollider != null)
+            {
+                rockCollider.enabled = false;
+            }
+            else
+            {
+                Debug.LogWarning($"[{gameObject.name}] Rock found but has no Collider2D!");
+            }
+        }
+        else
+        {
+            Debug.LogError($"[{gameObject.name}] 'evilassrock' object not found! Please assign it in the inspector or check the object name in the scene.");
+        }
     }
     
     private void OnTriggerEnter2D(Collider2D other)
@@ -53,54 +115,135 @@ public class BossSpawn2 : MonoBehaviour
     
     private IEnumerator BossSpawnSequence()
     {
-        // Phase 1: Fade the lighting
-        if (globalLight != null)
+        // Play rock sound at the beginning
+        if (AudioManager.Instance != null)
         {
-            float elapsedTime = 0f;
-            float initialIntensity = globalLight.intensity;
-            
-            Debug.Log($"[{gameObject.name}] Fading light from {initialIntensity} to {targetIntensity}");
-            
-            while (elapsedTime < fadeDuration)
-            {
-                elapsedTime += Time.deltaTime;
-                float t = elapsedTime / fadeDuration;
-                
-                // Smooth interpolation using ease-in-out
-                float smoothT = t * t * (3f - 2f * t);
-                globalLight.intensity = Mathf.Lerp(startIntensity, targetIntensity, smoothT);
-                
-                yield return null;
-            }
-            
-            // Ensure final value is set
-            globalLight.intensity = targetIntensity;
-            Debug.Log($"[{gameObject.name}] Lighting fade complete");
-        }
-        else
-        {
-            Debug.LogWarning($"[{gameObject.name}] Skipping lighting fade (no Light2D found)");
-            yield return new WaitForSeconds(fadeDuration); // Still wait even if no light
+            AudioManager.Instance.PlayRock();
         }
         
-        // Phase 2: Spawn the boss
-        if (swordBossPrefab != null)
+        // Enable rock collider immediately
+        if (rockCollider != null)
         {
-            Vector3 spawnPosition = bossSpawnPoint != null ? bossSpawnPoint.position : transform.position;
-            spawnedBoss = Instantiate(swordBossPrefab, spawnPosition, Quaternion.identity);
-            Debug.Log($"[{gameObject.name}] Sword boss spawned at {spawnPosition}");
-            
-            // Optional: Play boss music
-            if (playBossMusic && AudioManager.Instance != null)
-            {
-                // Assuming AudioManager has a boss music method
-                // AudioManager.Instance.PlayBossMusic();
-            }
+            rockCollider.enabled = true;
+            Debug.Log($"[{gameObject.name}] Rock collider enabled");
         }
-        else
+        
+        // Spawn the boss but keep it invisible initially
+        Vector3 spawnPosition = bossSpawnPoint != null ? bossSpawnPoint.position : transform.position;
+        
+        if (swordBossPrefab == null)
         {
             Debug.LogError($"[{gameObject.name}] Sword boss prefab not assigned!");
+            yield break;
         }
+        
+        spawnedBoss = Instantiate(swordBossPrefab, spawnPosition, Quaternion.identity);
+        
+        // Get boss components
+        SpriteRenderer bossSpriteRenderer = spawnedBoss.GetComponent<SpriteRenderer>();
+        Light2D[] bossLights = spawnedBoss.GetComponentsInChildren<Light2D>();
+        float[] targetLightIntensities = new float[bossLights.Length];
+        
+        // Make boss and its children invisible initially
+        if (bossSpriteRenderer != null)
+        {
+            Color bossColor = bossSpriteRenderer.color;
+            bossColor.a = 0f;
+            bossSpriteRenderer.color = bossColor;
+        }
+        
+        // Store original light intensities and turn them off
+        for (int i = 0; i < bossLights.Length; i++)
+        {
+            targetLightIntensities[i] = bossLights[i].intensity;
+            bossLights[i].intensity = 0f;
+        }
+        
+        Debug.Log($"[{gameObject.name}] Boss spawned invisibly at {spawnPosition}");
+        
+        // Phase 1: Simultaneous fading - darkness down, rock in, boss in
+        float elapsedTime = 0f;
+        
+        Debug.Log($"[{gameObject.name}] Starting fade sequence...");
+        
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / fadeDuration;
+            
+            // Smooth interpolation using ease-in-out
+            float smoothT = t * t * (3f - 2f * t);
+            
+            // Fade global lighting down
+            if (globalLight != null)
+            {
+                globalLight.intensity = Mathf.Lerp(startIntensity, targetIntensity, smoothT);
+            }
+            
+            // Fade rock sprite in
+            if (rockSpriteRenderer != null)
+            {
+                Color rockColor = rockSpriteRenderer.color;
+                rockColor.a = Mathf.Lerp(0f, 1f, smoothT);
+                rockSpriteRenderer.color = rockColor;
+            }
+            
+            // Fade boss sprite in
+            if (bossSpriteRenderer != null)
+            {
+                Color bossColor = bossSpriteRenderer.color;
+                bossColor.a = Mathf.Lerp(0f, 1f, smoothT);
+                bossSpriteRenderer.color = bossColor;
+            }
+            
+            // Fade boss lights in
+            for (int i = 0; i < bossLights.Length; i++)
+            {
+                bossLights[i].intensity = Mathf.Lerp(0f, targetLightIntensities[i], smoothT);
+            }
+            
+            yield return null;
+        }
+        
+        // Ensure final values are set
+        if (globalLight != null)
+        {
+            globalLight.intensity = targetIntensity;
+        }
+        
+        if (rockSpriteRenderer != null)
+        {
+            Color rockColor = rockSpriteRenderer.color;
+            rockColor.a = 1f;
+            rockSpriteRenderer.color = rockColor;
+        }
+        
+        if (bossSpriteRenderer != null)
+        {
+            Color bossColor = bossSpriteRenderer.color;
+            bossColor.a = 1f;
+            bossSpriteRenderer.color = bossColor;
+        }
+        
+        for (int i = 0; i < bossLights.Length; i++)
+        {
+            bossLights[i].intensity = targetLightIntensities[i];
+        }
+        
+        Debug.Log($"[{gameObject.name}] Fade complete - boss fully visible");
+        
+        // Phase 2: Now that boss is visible, play spawn taunt and music
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySpawnTaunt();
+            
+            if (playBossMusic)
+            {
+                AudioManager.Instance.PlayBossTwoMusic();
+            }
+        }
+        
+        Debug.Log($"[{gameObject.name}] Boss spawn sequence complete!");
     }
     
     // Optional: Restore lighting when boss is defeated

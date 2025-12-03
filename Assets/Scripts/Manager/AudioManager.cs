@@ -27,6 +27,10 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip buttonClickSound;
     [SerializeField] private AudioClip pickupSound;
     [SerializeField] private AudioClip powerupSound;
+    [SerializeField] private AudioClip prepare_yourself;
+    [SerializeField] private AudioClip loser;
+    [SerializeField] private AudioClip stop;
+    [SerializeField] private AudioClip rock;
 
     [Header("Settings")]
     [SerializeField] private float musicVolume = 0.7f;
@@ -97,10 +101,8 @@ public class AudioManager : MonoBehaviour
             { "Level Select", menuMusic },
             { "Lvl1", levelOneMusic },
             { "Lvl1-3d", levelOneMusic },
-            { "Lvl2", levelTwoMusic },
+            { "2D Level 2", levelTwoMusic },
             { "Kill Screen", killScreenMusic },
-            { "SampleScene", levelOneMusic },
-            { "Test", levelOneMusic }
         };
     }
 
@@ -243,6 +245,26 @@ public class AudioManager : MonoBehaviour
     public void PlayButtonClick()
     {
         PlaySound(buttonClickSound);
+    }
+
+    public void PlaySpawnTaunt()
+    {
+        PlaySound(prepare_yourself);
+    }
+
+    public void PlayLoser()
+    {
+        PlaySound(loser);
+    }
+
+    public void PlayStop()
+    {
+        PlaySound(stop);
+    }
+
+    public void PlayRock()
+    {
+        PlaySound(rock);
     }
 
     public void PlayPickup()
