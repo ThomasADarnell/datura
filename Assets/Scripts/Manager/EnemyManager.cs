@@ -24,12 +24,16 @@ public class EnemyManager : MonoBehaviour
 
     void Start()
     {
-        if (spawnOnStart)
+        if (spawnOnStart && spawnTilemap != null && enemyPrefab != null)
             SpawnRandomInTilemap();
     }
 
     void Update()
     {
+        // Only run spawning logic if tilemap and prefab are assigned
+        if (spawnTilemap == null || enemyPrefab == null)
+            return;
+
         if (timeRemaining > 0)
         {
             timeRemaining -= Time.deltaTime;
