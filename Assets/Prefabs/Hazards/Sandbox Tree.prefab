@@ -200,6 +200,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6619236348120480905}
   - component: {fileID: 2554646439760004845}
+  - component: {fileID: 2373639178429922745}
+  - component: {fileID: 8721516112939004142}
   m_Layer: 7
   m_Name: Sandbox Tree
   m_TagString: Untagged
@@ -216,8 +218,8 @@ Transform:
   m_GameObject: {fileID: 6170795552237777830}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 25.18, y: -8.96, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 25.162, y: -8.9836, z: 0}
+  m_LocalScale: {x: 1.274, y: 2.2135751, z: 1.274}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1359600431540539963}
@@ -237,9 +239,73 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6685c8b940c8ad547aaa6257da2e4d39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0.5
-  leftLimit: 15
-  rightLimit: 30
+  moveSpeed: 3
+  leftLimit: 20
+  rightLimit: 25
+--- !u!50 &2373639178429922745
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6170795552237777830}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!70 &8721516112939004142
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6170795552237777830}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.03250408, y: -0.09728164}
+  m_Size: {x: 1.6311779, y: 1.6384883}
+  m_Direction: 0
 --- !u!1 &6447498549259830551
 GameObject:
   m_ObjectHideFlags: 0
@@ -287,9 +353,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6685c8b940c8ad547aaa6257da2e4d39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1
-  leftLimit: 15
-  rightLimit: 30
+  moveSpeed: 32
+  leftLimit: 20
+  rightLimit: 25
 --- !u!114 &419249573742990095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -331,7 +397,7 @@ Transform:
   m_GameObject: {fileID: 7003446956321719903}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.576, y: 0.535, z: 0}
+  m_LocalPosition: {x: 0.562, y: 0.535, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
