@@ -3,23 +3,32 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public static string lastLevelName = "Menu"; // Default to Main Menu scene
+
+    void Start() { }
+    void Update() { }
+
+    public void LoadLevel(string levelName)
     {
-        
+        if (levelName != "Kill Screen")
+        {
+            lastLevelName = levelName;
+        }
+
+        SceneManager.LoadScene(levelName);
+    }
+    public void RetryLevel()
+    {
+        SceneManager.LoadScene(lastLevelName);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public void LevelOne()
     {
-        SceneManager.LoadScene("Lvl1");
+        LoadLevel("Lvl1");
     }
+
     public void LevelTwo()
     {
-        SceneManager.LoadScene("2D Level 2");
+        LoadLevel("2D Level 2");
     }
 }
