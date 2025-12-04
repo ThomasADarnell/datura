@@ -10,7 +10,7 @@ public class BossController : MonoBehaviour
 {
     [Header("Boss Prefab and Spawn Area")]
     public GameObject flowerPrefab;
-    public int maxDoubleSeeds = 7; // Limit for spawning 2 seeds
+    public int maxDoubleSeeds = 14; // Limit for spawning 2 seeds
     public Collider2D spawnArea; // Use a BoxCollider2D or similar to define the room bounds
     public int currentHealth;
     public int maxHealth = 10;
@@ -38,7 +38,6 @@ public class BossController : MonoBehaviour
             enabled = false;
             return;
         }
-        maxDoubleSeeds = 7;
 
     }
 

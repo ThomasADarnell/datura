@@ -8,7 +8,7 @@ public class FlowerBoss : MonoBehaviour
 
     // --- Public Parameters ---
     [Header("Core Stats")]
-    public float stageDuration = 3.0f; // Time spent in Seed, Sprout, and Budding stages
+    public float stageDuration = 1.0f; // Time spent in Seed, Sprout, and Budding stages
     public float flowerStageDuration = 2.0f; // Time before explosion in Flower stage
     public float explosionWarningTime = 0.5f; // Time for flashing color before explosion
     public float explosionRadius = 3.0f;
