@@ -339,11 +339,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  attackDuration: 0.25
-  distanceToAttack: 1
+  attackDuration: 0.05
+  distanceToAttack: 1.25
   dashSpeed: 15
   dashingTime: 0.15
   dashCooldown: 1
+  canMove: 1
+  canDash: 1
   ExplosionEffectPrefab: {fileID: 1967835574231978638, guid: 3e196c9e632c76841a71cb6e2dc6d010, type: 3}
 --- !u!114 &5147545513457807351
 MonoBehaviour:
