@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Slot
   - BoundsArea
+  - GlobalLighting
+  - UI
+  - evilassrock
   layers:
   - Default
   - TransparentFX
