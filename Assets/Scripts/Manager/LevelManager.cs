@@ -47,6 +47,11 @@ public class LevelManager : MonoBehaviour
         LoadLevel("2D Level 2");
     }
 
+    public void LevelEvil()
+    {
+        LoadLevel("Lvl2");
+    }
+
     public void MainMenu()
     {
         LoadLevel("Menu");

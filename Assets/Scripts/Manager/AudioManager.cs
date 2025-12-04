@@ -18,6 +18,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip bossTwoMusic;
     [SerializeField] private AudioClip killScreenMusic;
     [SerializeField] private AudioClip winScreenMusic;
+    [SerializeField] private AudioClip evilMusic;
 
     [Header("Sound Effects")]
     [SerializeField] private AudioClip playerStabSound;
@@ -105,6 +106,7 @@ public class AudioManager : MonoBehaviour
             { "2D Level 2", levelTwoMusic },
             { "Kill Screen", killScreenMusic },
             { "Win Screen", winScreenMusic },
+            { "Lvl2", evilMusic }
         };
     }
 
