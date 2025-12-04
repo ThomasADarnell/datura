@@ -126,8 +126,9 @@ public class Grasshopper : EnemyBaseBehavior
         {
             AudioManager.Instance.PlayEnemyDeath();
         }
+        Destroy(gameObject);
 
-        Destroy(gameObject, 1f);
+        
     }
 
 
