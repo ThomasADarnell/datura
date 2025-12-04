@@ -12,8 +12,8 @@ public class PlayerMovement : MonoBehaviour
     // --- Public Variables ---
     public float moveSpeed = 5f;  // default player speed
     private float attackTimer = 0f;  // attack cooldown
-    public float attackDuration = 1f;  // attack cooldown duration (time between attacks)
-    public float distanceToAttack = 2f; // attack range
+    public float attackDuration = .75f;  // attack cooldown duration (time between attacks)
+    public float distanceToAttack = 10f; // attack range
 
     [Header("Dash Settings")]
     public float dashSpeed = 15f; // dash speed
@@ -30,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 lastMoveDir = Vector2.down;
     private bool isAttacking = false;
+    private bool canAttack = true;
     private Health health;
 
     private enum FacingDirection
@@ -63,6 +64,30 @@ public class PlayerMovement : MonoBehaviour
         }
         health = FindAnyObjectByType<Health>();
     }
+    void Update()
+    {
+        // Decrement the attack timer every frame
+        if (attackTimer > 0)
+        {
+            // Use Time.deltaTime here, not FixedDeltaTime
+            attackTimer -= Time.deltaTime;
+            if (attackTimer <= 0)
+            {
+                // Ensure isAttacking is false when the timer finishes
+                StartCoroutine(Cooldown());
+                //isAttacking = false;
+            }
+        }
+
+        // Update the Animator parameter in Update as well for responsiveness
+        //anim.SetBool("isAttacking", isAttacking);
+    }
+
+    public IEnumerator Cooldown()
+    {
+        yield return new WaitForSeconds(1);
+        canAttack = true;
+    }
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -80,12 +105,21 @@ public class PlayerMovement : MonoBehaviour
 
     // Existing OnUse input action
     public void OnUse(InputAction.CallbackContext context)
-    {   
-        // Prevent attacking while dashing or on cooldown
-        if (isDashing || attackTimer > 0) return;
+    {
+        if (!context.started) return;
 
-        isAttacking = true;
+        // Optional: Add this check as a common fix for a Unity Input System bug
+        if (!gameObject.scene.IsValid()) return;
+        
+        // Prevent attacking while dashing or on cooldown
+        if (isDashing || attackTimer > 0 || !canAttack) return;
+
+        //isAttacking = true;
+        canAttack = false;
         attackTimer = attackDuration;
+
+        anim.SetTrigger("AttackTrigger");
+        Debug.Log("Attack Trigger fired!");
 
         if (AudioManager.Instance != null)
         {
@@ -238,7 +272,7 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (attackTimer > 0)
+        /*if (attackTimer > 0)
         {
             attackTimer -= Time.fixedDeltaTime;
             if (attackTimer <= 0)
@@ -247,7 +281,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        anim.SetBool("isAttacking", isAttacking);
+        anim.SetBool("isAttacking", isAttacking);*/
 
 
         if (!canMove && !canDash && !isDashing)
