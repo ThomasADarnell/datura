@@ -9,7 +9,6 @@ public class Grasshopper : EnemyBaseBehavior
     public int maxHealth = 2;
 
     [Header("Target and Movement")]
-    public Transform target;  // player
     public float travelSpeed = 8f;  // jump speed
     public float jumpDuration = 0.5f;  // jump duration
     public float jumpCooldown = 2.5f;  // time between jumps
@@ -44,11 +43,32 @@ public class Grasshopper : EnemyBaseBehavior
         lastJumpTime = Time.time - jumpCooldown;
     }
 
+    protected new void Start() // Use 'new' to suppress compiler warning if base class has Start
+    {
+        base.Start(); // Call the base class Start to find the playerTransform
+    }
+
     void Update()
     {
-        if (target != null && !isJumping && Time.time > lastJumpTime + jumpCooldown)
+        if (playerTransform != null && !isJumping && Time.time > lastJumpTime + jumpCooldown)
         {
+            // Update the base class's Vector3 target with the player's current position
+            target = playerTransform.position;
             StartCoroutine(PerformJumpArc());
+        }
+    }
+
+    // NEW: Handle taking damage from external sources (like player attacks/bullets)
+    private new void OnTriggerEnter2D(Collider2D other)
+    {
+        base.OnTriggerEnter2D(other);
+
+        // Ensure this doesn't interfere with the base class's OnTriggerEnter2D (Player contact)
+        if (other.CompareTag("Attack"))
+        {
+            // Assuming the attack object has a component/script (like 'DamageSource') 
+            // that defines the damage value. For simplicity, we'll hardcode 1 damage here.
+            TakeDamage(1);
         }
     }
 
@@ -58,7 +78,7 @@ public class Grasshopper : EnemyBaseBehavior
         lastJumpTime = Time.time;
 
         // See distance from grasshopper to player
-        Vector2 direction = (target.position - transform.position).normalized;
+        Vector2 direction = (target - transform.position).normalized;
         rb.linearVelocity = direction * travelSpeed;
 
         float startTime = Time.time;
@@ -83,24 +103,11 @@ public class Grasshopper : EnemyBaseBehavior
         isJumping = false;
     }
 
-    private void DealDamage()
-    {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null) {
-            PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
-            if (playerHealth != null)
-            {
-                playerHealth.TakeDamage(1);
-            }
-        }
-    }
-
     public void TakeDamage(int damage)
     {
         if (currentHealth <= 0) return;
 
         currentHealth -= damage;
-        Debug.LogError("Enemy hit");
 
         if (AudioManager.Instance != null)
         {
@@ -113,7 +120,6 @@ public class Grasshopper : EnemyBaseBehavior
         }
     }
 
-
     void Die()
     {
         if (AudioManager.Instance != null)
@@ -121,8 +127,9 @@ public class Grasshopper : EnemyBaseBehavior
             AudioManager.Instance.PlayEnemyDeath();
         }
 
-        // Destroy after animation completes
         Destroy(gameObject, 1f);
     }
+
+
 
 }
