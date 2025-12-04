@@ -322,11 +322,12 @@ public class Sword : EnemyBaseBehavior
         
         if (anim != null)
         {
+            // Set charge attack to false FIRST, then set isAttacking
+            anim.SetBool("isChargeAttack", false);
             anim.SetBool("isIdle", false);
             anim.SetBool("isWalking", false);
             anim.SetBool("isRunning", false);
             anim.SetBool("isAttacking", true);
-            anim.SetBool("isChargeAttack", false);
         }
         
         Debug.Log($"[{gameObject.name}] Sword performing normal attack!");
@@ -334,8 +335,8 @@ public class Sword : EnemyBaseBehavior
         // Deal damage when the sword actually swings (frame 17)
         Invoke(nameof(DealNormalAttackDamage), normalAttackDamageDelay);
         
-        // Return to idle after attack animation
-        Invoke(nameof(FinishNormalAttack), 0.8f);
+        // Return to idle after attack animation (0.95 seconds)
+        Invoke(nameof(FinishNormalAttack), 0.95f);
     }
     
     void DealNormalAttackDamage()
@@ -370,11 +371,13 @@ public class Sword : EnemyBaseBehavior
         
         if (anim != null)
         {
+            // CRITICAL: Set isChargeAttack to true FIRST, then isAttacking
+            // This ensures the Filter state routes to the charge attack animation
+            anim.SetBool("isChargeAttack", true);
             anim.SetBool("isIdle", false);
             anim.SetBool("isWalking", false);
             anim.SetBool("isRunning", false);
             anim.SetBool("isAttacking", true);
-            anim.SetBool("isChargeAttack", true);
         }
         
         Debug.Log($"[{gameObject.name}] Sword performing charge attack!");
@@ -382,7 +385,7 @@ public class Sword : EnemyBaseBehavior
         // Deal damage when the charge attack actually hits (frame 8)
         Invoke(nameof(DealChargeAttackDamage), chargeAttackDamageDelay);
         
-        // Set duration timer
+        // Set duration timer (0.85 seconds to match animation)
         Invoke(nameof(FinishChargeAttack), chargeAttackDuration);
     }
     
@@ -400,6 +403,11 @@ public class Sword : EnemyBaseBehavior
         
         if (currentState == SwordState.ChargeAttacking)
         {
+            // Reset charge attack bool before transitioning
+            if (anim != null)
+            {
+                anim.SetBool("isChargeAttack", false);
+            }
             TransitionToIdle();
         }
     }

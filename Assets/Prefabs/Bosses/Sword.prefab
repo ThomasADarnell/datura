@@ -61,7 +61,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: 2623ae90f577a3d4aa99b62cdbf94f81, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -177,6 +177,9 @@ MonoBehaviour:
   chargeAttackCooldown: 5
   chargeAttackDistance: 3
   chargeAttackDuration: 0.5
+  normalAttackDamageDelay: 0.283
+  chargeAttackDamageDelay: 0.133
+  bossSpawner: {fileID: 0}
 --- !u!61 &8507615031685367118
 BoxCollider2D:
   m_ObjectHideFlags: 0
