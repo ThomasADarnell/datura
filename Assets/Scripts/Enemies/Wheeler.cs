@@ -8,7 +8,7 @@ public class Wheeler : EnemyBaseBehavior
     public int maxHealth = 2;
     
     [Header("Detection Settings")]
-    public float detectionRange = 15f; // Range to detect player
+    public float detectionRange = 50f; // Range to detect player
     public float idleTimeThreshold = 3f; // How long player must be idle before Wheeler emerges
     public float chaseSpeed = 6f; // Very fast chase speed
     

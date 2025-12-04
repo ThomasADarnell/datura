@@ -660,9 +660,18 @@ public class Sword : EnemyBaseBehavior
         
         // Disable this script to prevent any further updates
         this.enabled = false;
+
+        // Trigger win screen after death animation completes (1.017 seconds for animation)
+        Invoke(nameof(TriggerWinScreen), 1.2f);
         
         // Destroy after death animation completes (increased time for full animation)
         Destroy(gameObject, 2f);
+    }
+    
+    void TriggerWinScreen()
+    {
+        // Load the WinScreen level
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Win Screen");
     }
     
     // --- Gizmos for Debugging ---

@@ -5867,6 +5867,7 @@ MonoBehaviour:
   bossOneMusic: {fileID: 8300000, guid: 6da87d917ae3bf546b7a34eaf425ee10, type: 3}
   bossTwoMusic: {fileID: 8300000, guid: 1bd47c182524d824989f486a04082092, type: 3}
   killScreenMusic: {fileID: 8300000, guid: 9d0b5b65129aecf4296eba3d9a7fed2e, type: 3}
+  winScreenMusic: {fileID: 8300000, guid: 46aa116e4a7e70447b5a718ed652742f, type: 3}
   playerStabSound: {fileID: 8300000, guid: 0403e290a0c6b464c82b5e2fa072f934, type: 3}
   playerHurtSound: {fileID: 8300000, guid: e5356885cf52267448459c6763e00b10, type: 3}
   playerDeathSound: {fileID: 8300000, guid: adc8c4370b83ad84091eaaf4097e79b4, type: 3}

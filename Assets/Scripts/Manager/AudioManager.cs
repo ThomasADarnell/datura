@@ -17,6 +17,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip bossOneMusic;
     [SerializeField] private AudioClip bossTwoMusic;
     [SerializeField] private AudioClip killScreenMusic;
+    [SerializeField] private AudioClip winScreenMusic;
 
     [Header("Sound Effects")]
     [SerializeField] private AudioClip playerStabSound;
@@ -103,6 +104,7 @@ public class AudioManager : MonoBehaviour
             { "Lvl1-3d", levelOneMusic },
             { "2D Level 2", levelTwoMusic },
             { "Kill Screen", killScreenMusic },
+            { "Win Screen", winScreenMusic },
         };
     }
 
@@ -112,6 +114,8 @@ public class AudioManager : MonoBehaviour
         if (newScene != currentScene)
         {
             currentScene = newScene;
+            // Reset crossfading flag when scene changes to prevent stuck state
+            isCrossfading = false;
             PlayMusicForScene(currentScene);
         }
     }
@@ -130,6 +134,14 @@ public class AudioManager : MonoBehaviour
 
         if (musicSource.clip == clip && musicSource.isPlaying)
             return;
+
+        // Stop any ongoing crossfade before starting a new one
+        if (isCrossfading)
+        {
+            StopAllCoroutines();
+            isCrossfading = false;
+            musicSource.volume = musicVolume;
+        }
 
         if (fadeTransition && musicSource.isPlaying)
         {
