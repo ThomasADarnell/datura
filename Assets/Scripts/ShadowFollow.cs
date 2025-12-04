@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class ShadowFollow : MonoBehaviour
 {
-    public Transform player;
+    private Transform player;
+    private GameObject playerObject;
     public float followSpeed = 0.5f;
     public GameObject monsterPrefab;
     public float spawnHeight = 5f;
@@ -15,23 +16,23 @@ public class ShadowFollow : MonoBehaviour
         // Ensure only one shadow is "active" for the monster to report back to
         currentActiveShadow = this;
     }
+    void LateUpdate()
+    {
+        if (playerObject == null)
+        {
+            playerObject = GameObject.FindGameObjectWithTag("Player");
+        }
+        if (playerObject != null)
+        {
+            player = playerObject.transform;
+        }
+    }
 
     void Update()
     {
         if (player != null && !triggered)
         {
             transform.position = Vector3.MoveTowards(transform.position, player.position, followSpeed * Time.deltaTime);
-        }
-    }
-
-    void OnTriggerEnter(Collider other) // Use OnTriggerEnter2D for 2D games
-    {
-        if (!triggered && other.CompareTag("Player"))
-        {
-            triggered = true;
-            Debug.Log("Shadow hit the player! Spawning monster...");
-            SpawnMonster(transform.position); 
-            // !! IMPORTANT: The shadow no longer disappears here !!
         }
     }
     

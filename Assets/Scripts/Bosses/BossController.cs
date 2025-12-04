@@ -156,13 +156,6 @@ public class BossController : MonoBehaviour
         {
             healthUIGroup.SetActive(false);
         }
-        SpawnTreasureChest();
-    }
-
-    private void SpawnTreasureChest()
-    {
-        // Logic to instantiate the treasure chest prefab (e.g., at the center of the room)
-        SceneManager.LoadScene("Level Select");
-        // Example: Instantiate(treasureChestPrefab, transform.position, Quaternion.identity);
+        SceneManager.LoadScene("Win Screen");
     }
 }
