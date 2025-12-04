@@ -9,13 +9,26 @@ public class EnemyBaseBehavior : MonoBehaviour
     public float stoppingDistance = 1.5f; // Distance from target where slow-down begins
     public float damageCooldown = 2f;
 
-
+    protected Transform playerTransform;
     protected Vector3 target;
     protected GameObject player;
     protected float currentSpeed = 0f; // New: Tracks the speed in the current frame
     protected Vector3 moveDirection; // Tracks the desired movement direction
     protected float nextDamageTime = 0f;
 
+    protected void Start()
+    {
+        // Find the player object by tag once
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            playerTransform = playerObj.transform;
+        }
+        else
+        {
+            Debug.LogError("EnemyBaseBehavior could not find an object with the 'Player' tag.");
+        }
+    }
 
     protected void OnTriggerEnter2D(Collider2D collision)
     {
