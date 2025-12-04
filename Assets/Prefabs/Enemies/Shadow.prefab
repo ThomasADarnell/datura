@@ -57,7 +57,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: 2623ae90f577a3d4aa99b62cdbf94f81, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -137,7 +137,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 301a184a6f1dd304382fb21e7039d6ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 3954935639603657846, guid: b12fe7b4d959fff4fb0e934f8bf77738, type: 3}
   followSpeed: 0.5
   monsterPrefab: {fileID: 3619368805095672719, guid: 0937dac694adef1408e36989cc4dab00, type: 3}
   spawnHeight: 5
