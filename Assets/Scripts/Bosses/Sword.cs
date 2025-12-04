@@ -28,9 +28,12 @@ public class Sword : EnemyBaseBehavior
     public float attackCooldown = 2f;
     public float chargeAttackCooldown = 5f;
     public float chargeAttackDistance = 5f; // How far they dash during charge
-    public float chargeAttackDuration = 0.5f;
+    public float chargeAttackDuration = 0.85f; // Match animation length
+    public float normalAttackDamageDelay = 0.283f; // Frame 17 at 60fps
+    public float chargeAttackDamageDelay = 0.133f; // Frame 8 at 60fps
     
     [Header("References")]
+    public BossSpawn2 bossSpawner; // Reference to the spawner for health UI updates
     private Animator anim;
     private SpriteRenderer spriteRenderer;
     
@@ -328,11 +331,19 @@ public class Sword : EnemyBaseBehavior
         
         Debug.Log($"[{gameObject.name}] Sword performing normal attack!");
         
-        // Deal damage to player if in range
-        DealDamageToPlayer(normalAttackDamage);
+        // Deal damage when the sword actually swings (frame 17)
+        Invoke(nameof(DealNormalAttackDamage), normalAttackDamageDelay);
         
         // Return to idle after attack animation
         Invoke(nameof(FinishNormalAttack), 0.8f);
+    }
+    
+    void DealNormalAttackDamage()
+    {
+        if (currentState == SwordState.Attacking)
+        {
+            DealDamageToPlayer(normalAttackDamage);
+        }
     }
     
     void FinishNormalAttack()
@@ -368,16 +379,24 @@ public class Sword : EnemyBaseBehavior
         
         Debug.Log($"[{gameObject.name}] Sword performing charge attack!");
         
+        // Deal damage when the charge attack actually hits (frame 8)
+        Invoke(nameof(DealChargeAttackDamage), chargeAttackDamageDelay);
+        
         // Set duration timer
         Invoke(nameof(FinishChargeAttack), chargeAttackDuration);
+    }
+    
+    void DealChargeAttackDamage()
+    {
+        if (currentState == SwordState.ChargeAttacking)
+        {
+            DealDamageToPlayer(chargeAttackDamage);
+        }
     }
     
     void FinishChargeAttack()
     {
         isCharging = false;
-        
-        // Deal damage to player if in range
-        DealDamageToPlayer(chargeAttackDamage);
         
         if (currentState == SwordState.ChargeAttacking)
         {
@@ -530,6 +549,12 @@ public class Sword : EnemyBaseBehavior
         
         Debug.Log($"[{gameObject.name}] Sword took {damage} damage. Health: {currentHealth}/{maxHealth}");
         
+        // Update health UI
+        if (bossSpawner != null)
+        {
+            bossSpawner.UpdateHealthUI(currentHealth, maxHealth);
+        }
+        
         if (currentHealth <= 0)
         {
             Die();
@@ -578,20 +603,31 @@ public class Sword : EnemyBaseBehavior
         
         // Cancel any pending attacks or state changes
         CancelInvoke(nameof(FinishNormalAttack));
+        CancelInvoke(nameof(DealNormalAttackDamage));
         CancelInvoke(nameof(FinishChargeAttack));
+        CancelInvoke(nameof(DealChargeAttackDamage));
         CancelInvoke(nameof(RecoverFromDamage));
         
         Debug.Log($"[{gameObject.name}] Sword died!");
         
+        // Notify spawner that boss is defeated
+        if (bossSpawner != null)
+        {
+            bossSpawner.OnBossDefeated();
+        }
+        
         if (anim != null)
         {
-            anim.SetBool("isDead", true);
+            // Disable all other animation parameters first
             anim.SetBool("isIdle", false);
             anim.SetBool("isWalking", false);
             anim.SetBool("isRunning", false);
             anim.SetBool("isAttacking", false);
             anim.SetBool("isChargeAttack", false);
             anim.SetBool("isDamaged", false);
+            
+            // Set death last to ensure it takes priority
+            anim.SetBool("isDead", true);
         }
         
         if (AudioManager.Instance != null)
@@ -604,6 +640,14 @@ public class Sword : EnemyBaseBehavior
         if (col != null)
         {
             col.enabled = false;
+        }
+        
+        // Disable the Rigidbody2D to prevent physics interactions
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.simulated = false;
         }
         
         // Disable this script to prevent any further updates

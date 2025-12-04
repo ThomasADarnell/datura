@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using System.Collections;
+using TMPro;
+using UnityEngine.UI;
 
 public class BossSpawn2 : MonoBehaviour
 {
@@ -19,6 +21,11 @@ public class BossSpawn2 : MonoBehaviour
     [Header("Audio Settings")]
     public bool playBossMusic = false; // Optional: trigger boss music
     
+    [Header("UI References (Set in Editor)")]
+    public GameObject healthUIGroup; // The parent group to show/hide the UI
+    public Slider healthSlider;
+    public TextMeshPro healthText;
+    
     private bool hasTriggered = false;
     private Light2D globalLight;
     private GameObject spawnedBoss;
@@ -28,6 +35,12 @@ public class BossSpawn2 : MonoBehaviour
     
     void Start()
     {
+        // Hide health UI initially
+        if (healthUIGroup != null)
+        {
+            healthUIGroup.SetActive(false);
+        }
+        
         // Find the global lighting object
         GameObject lightingObject = GameObject.FindGameObjectWithTag("GlobalLighting");
         
@@ -243,12 +256,48 @@ public class BossSpawn2 : MonoBehaviour
             }
         }
         
+        // Phase 3: Show health bar and set up boss reference
+        if (spawnedBoss != null)
+        {
+            Sword sword = spawnedBoss.GetComponent<Sword>();
+            if (sword != null)
+            {
+                sword.bossSpawner = this;
+                UpdateHealthUI(sword.currentHealth, sword.maxHealth);
+                
+                if (healthUIGroup != null)
+                {
+                    healthUIGroup.SetActive(true);
+                }
+            }
+        }
+        
         Debug.Log($"[{gameObject.name}] Boss spawn sequence complete!");
     }
     
-    // Optional: Restore lighting when boss is defeated
+    public void UpdateHealthUI(int current, int max)
+    {
+        if (healthSlider != null)
+        {
+            healthSlider.maxValue = max;
+            healthSlider.value = current;
+        }
+
+        // if (healthText != null)
+        // {
+        //     healthText.text = $"Sword Health: {current} / {max}";
+        // }
+    }
+    
     public void OnBossDefeated()
     {
+        Debug.Log("SWORD BOSS DEFEATED!");
+        
+        if (healthUIGroup != null)
+        {
+            healthUIGroup.SetActive(false);
+        }
+        
         StartCoroutine(RestoreLighting());
     }
     
