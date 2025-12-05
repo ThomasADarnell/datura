@@ -189,6 +189,12 @@ namespace InventorySystem
 
             activeItem = new InventoryItem(new ItemInitializer(false));
 
+            // Highlight the first slot by default
+            if (positionToSlotDict.ContainsKey(0))
+            {
+                slotPosition = 0;
+                SetPressed(positionToSlotDict[0], true);
+            }
         }
 
         /// <summary>

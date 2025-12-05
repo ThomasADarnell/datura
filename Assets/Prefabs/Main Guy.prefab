@@ -217,7 +217,19 @@ MonoBehaviour:
     m_ActionId: eb00fc81-052a-428b-a63d-5e075b9fb926
     m_ActionName: '2D/CycleLeft[/Keyboard/q]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1218288468839909032}
+        m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
+        m_MethodName: OnItem
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: d65f5f72-f611-403d-91cb-36d2567c3e65
     m_ActionName: '2D/Flashlight[/Keyboard/shift]'
   - m_PersistentCalls:

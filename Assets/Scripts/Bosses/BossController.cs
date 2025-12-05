@@ -51,6 +51,10 @@ public class BossController : MonoBehaviour
         }
 
         hasFightStarted = true;
+        if(AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBossOneMusic();
+        }
         Debug.Log("Player entered the boss room. Starting Flower Boss fight!");
 
         // Start the fight with one initial seed

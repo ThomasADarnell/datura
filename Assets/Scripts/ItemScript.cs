@@ -16,7 +16,10 @@ namespace InventorySampleScene
                 if (!InventoryController.instance.InventoryFull("Hotbar", itemName))
                 {
                     InventoryController.instance.AddItem("Hotbar", itemName);
-                    AudioManager.Instance.PlayPickup();
+                    if(AudioManager.Instance != null)
+                    {
+                        AudioManager.Instance.PlayPickup();
+                    }
                     Destroy(gameObject);
 
                 }

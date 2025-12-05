@@ -36,6 +36,7 @@ public class Sword : EnemyBaseBehavior
     public BossSpawn2 bossSpawner; // Reference to the spawner for health UI updates
     private Animator anim;
     private SpriteRenderer spriteRenderer;
+    private UnityEngine.Rendering.Universal.Light2D[] childLights; // Child lights to flip
     
     // --- Private State Variables ---
     private enum SwordState
@@ -63,11 +64,12 @@ public class Sword : EnemyBaseBehavior
     private bool isFacingRight = true; // Track sprite facing direction
     
     // --- Initialization ---
-    void Start()
+    new void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        childLights = GetComponentsInChildren<UnityEngine.Rendering.Universal.Light2D>();
         
         // Note: Spawn taunt is handled by BossSpawn2 script for proper timing
         
@@ -322,12 +324,8 @@ public class Sword : EnemyBaseBehavior
         
         if (anim != null)
         {
-            // Set charge attack to false FIRST, then set isAttacking
-            anim.SetBool("isChargeAttack", false);
-            anim.SetBool("isIdle", false);
-            anim.SetBool("isWalking", false);
-            anim.SetBool("isRunning", false);
-            anim.SetBool("isAttacking", true);
+            // Trigger the normal attack animation directly
+            anim.SetTrigger("TriggerNormalAttack");
         }
         
         Debug.Log($"[{gameObject.name}] Sword performing normal attack!");
@@ -371,13 +369,8 @@ public class Sword : EnemyBaseBehavior
         
         if (anim != null)
         {
-            // CRITICAL: Set isChargeAttack to true FIRST, then isAttacking
-            // This ensures the Filter state routes to the charge attack animation
-            anim.SetBool("isChargeAttack", true);
-            anim.SetBool("isIdle", false);
-            anim.SetBool("isWalking", false);
-            anim.SetBool("isRunning", false);
-            anim.SetBool("isAttacking", true);
+            // Trigger the charge attack animation directly
+            anim.SetTrigger("TriggerChargeAttack");
         }
         
         Debug.Log($"[{gameObject.name}] Sword performing charge attack!");
@@ -403,11 +396,6 @@ public class Sword : EnemyBaseBehavior
         
         if (currentState == SwordState.ChargeAttacking)
         {
-            // Reset charge attack bool before transitioning
-            if (anim != null)
-            {
-                anim.SetBool("isChargeAttack", false);
-            }
             TransitionToIdle();
         }
     }
@@ -425,7 +413,7 @@ public class Sword : EnemyBaseBehavior
                 playerHealth.TakeDamage(damage);
                 
                 // Play loser taunt when damaging player
-                if (AudioManager.Instance != null)
+                if (AudioManager.Instance != null && Random.value < 0.5f)
                 {
                     AudioManager.Instance.PlayLoser();
                 }
@@ -447,8 +435,6 @@ public class Sword : EnemyBaseBehavior
             anim.SetBool("isIdle", true);
             anim.SetBool("isWalking", false);
             anim.SetBool("isRunning", false);
-            anim.SetBool("isAttacking", false);
-            anim.SetBool("isChargeAttack", false);
         }
     }
     
@@ -462,8 +448,6 @@ public class Sword : EnemyBaseBehavior
             anim.SetBool("isIdle", false);
             anim.SetBool("isWalking", true);
             anim.SetBool("isRunning", false);
-            anim.SetBool("isAttacking", false);
-            anim.SetBool("isChargeAttack", false);
         }
     }
     
@@ -477,8 +461,6 @@ public class Sword : EnemyBaseBehavior
             anim.SetBool("isIdle", false);
             anim.SetBool("isWalking", true); // Use walking animation for roaming
             anim.SetBool("isRunning", false);
-            anim.SetBool("isAttacking", false);
-            anim.SetBool("isChargeAttack", false);
         }
     }
     
@@ -491,8 +473,6 @@ public class Sword : EnemyBaseBehavior
             anim.SetBool("isIdle", false);
             anim.SetBool("isWalking", false);
             anim.SetBool("isRunning", true);
-            anim.SetBool("isAttacking", false);
-            anim.SetBool("isChargeAttack", false);
         }
     }
     
@@ -510,11 +490,13 @@ public class Sword : EnemyBaseBehavior
         {
             spriteRenderer.flipX = false;
             isFacingRight = true;
+            FlipChildLights();
         }
         else if (!playerIsRight && isFacingRight)
         {
             spriteRenderer.flipX = true;
             isFacingRight = false;
+            FlipChildLights();
         }
     }
     
@@ -529,11 +511,30 @@ public class Sword : EnemyBaseBehavior
         {
             spriteRenderer.flipX = false;
             isFacingRight = true;
+            FlipChildLights();
         }
         else if (!movingRight && isFacingRight)
         {
             spriteRenderer.flipX = true;
             isFacingRight = false;
+            FlipChildLights();
+        }
+    }
+    
+    void FlipChildLights()
+    {
+        // Flip all child lights to match the sprite direction
+        if (childLights != null)
+        {
+            foreach (var light in childLights)
+            {
+                if (light != null)
+                {
+                    Vector3 localPos = light.transform.localPosition;
+                    localPos.x = -localPos.x;
+                    light.transform.localPosition = localPos;
+                }
+            }
         }
     }
     
@@ -576,12 +577,10 @@ public class Sword : EnemyBaseBehavior
             if (anim != null)
             {
                 anim.SetBool("isDamaged", true);
-                anim.SetBool("isAttacking", false);
-                anim.SetBool("isChargeAttack", false);
             }
             
             // Play stop audio when damaged
-            if (AudioManager.Instance != null)
+            if (AudioManager.Instance != null && Random.value < 0.5f)
             {
                 AudioManager.Instance.PlayStop();
             }
@@ -630,8 +629,6 @@ public class Sword : EnemyBaseBehavior
             anim.SetBool("isIdle", false);
             anim.SetBool("isWalking", false);
             anim.SetBool("isRunning", false);
-            anim.SetBool("isAttacking", false);
-            anim.SetBool("isChargeAttack", false);
             anim.SetBool("isDamaged", false);
             
             // Set death last to ensure it takes priority

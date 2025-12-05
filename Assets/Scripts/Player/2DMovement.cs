@@ -14,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
     private float attackTimer = 0f;  // attack cooldown
     public float attackDuration = .75f;  // attack cooldown duration (time between attacks)
     public float distanceToAttack = 10f; // attack range
+    public float meleeRadius = 1f; // radius around player that always takes damage on attack
 
     [Header("Dash Settings")]
     public float dashSpeed = 15f; // dash speed
@@ -103,7 +104,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // Existing OnUse input action
+    // Attack input action
     public void OnUse(InputAction.CallbackContext context)
     {
         if (!context.started) return;
@@ -126,22 +127,35 @@ public class PlayerMovement : MonoBehaviour
             AudioManager.Instance.PlayPlayerStab();
         }
 
+        PerformAttack();
+    }
+
+    // Item usage input action
+    public void OnItem(InputAction.CallbackContext context)
+    {
+        if (!context.started) return;
+
+        // Optional: Add this check as a common fix for a Unity Input System bug
+        if (!gameObject.scene.IsValid()) return;
+        
+        // Prevent using items while dashing
+        if (isDashing) return;
+
         InventoryUIManager inventory = FindFirstObjectByType<InventoryUIManager>();
         inventory.SetActiveItem();
         InventoryItem item = inventory.GetActiveItem();
         string type = item.GetItemType();
 
-        if (type.IsUnityNull())
+        if (!type.IsUnityNull())
         {
-            PerformAttack();
-        }
-        else if (type == "Apple")
-        {
-            UseApple(item);
-        }
-        else if (type == "ProtectiveGear")
-        {
-            UseProtectiveGear(item);
+            if (type == "Apple")
+            {
+                UseApple(item);
+            }
+            else if (type == "ProtectiveGear")
+            {
+                UseProtectiveGear(item);
+            }
         }
     }
 
@@ -187,6 +201,61 @@ public class PlayerMovement : MonoBehaviour
 
         AttackEnemyType<AngelTrumpet>(facingAngle, attackAngle, (monster) => monster.TakeDamage(1)); 
 
+        // Also damage all enemies within melee radius regardless of direction
+        DamageMeleeRadius();
+    }
+
+    private void DamageMeleeRadius()
+    {
+        // Handle butterflies in melee range
+        EnemyManager[] enemyManagers = FindObjectsByType<EnemyManager>(FindObjectsSortMode.None);
+        if (enemyManagers != null && enemyManagers.Length > 0)
+        {
+            EnemyManager enemyManager = enemyManagers[0];
+            List<EnemyBaseBehavior> butterflies = enemyManager.Enemies;
+            
+            if (butterflies != null && butterflies.Count > 0)
+            {
+                List<EnemyBaseBehavior> butterfliesToDamage = new List<EnemyBaseBehavior>();
+
+                foreach (EnemyBaseBehavior butterfly in butterflies)
+                {
+                    if (butterfly != null && Vector2.Distance(transform.position, butterfly.transform.position) <= meleeRadius)
+                    {
+                        butterfliesToDamage.Add(butterfly);
+                        SpawnExplosionEffect(butterfly.transform.position);
+                    }
+                }
+
+                foreach (EnemyBaseBehavior butterfly in butterfliesToDamage)
+                {
+                    enemyManager.enemyDamaged(butterfly);
+                }
+            }
+        }
+
+        // Handle all manually-placed enemy types in melee range
+        DamageMeleeEnemyType<Wheeler>((wheeler) => wheeler.TakeDamage(1));
+        DamageMeleeEnemyType<LocustBehavior>((locust) => locust.TakeDamage(1));
+        DamageMeleeEnemyType<FlowerBoss>((flower) => flower.TakeDamage(1));
+        DamageMeleeEnemyType<Bomber>((bomber) => bomber.TakeDamage(1));
+        DamageMeleeEnemyType<Fly>((fly) => fly.TakeDamage(1));
+        DamageMeleeEnemyType<Sword>((sword) => sword.TakeDamage(1));
+        DamageMeleeEnemyType<Grasshopper>((grasshopper) => grasshopper.TakeDamage(1));
+        DamageMeleeEnemyType<AngelTrumpet>((monster) => monster.TakeDamage(1));
+    }
+
+    private void DamageMeleeEnemyType<T>(System.Action<T> damageAction) where T : MonoBehaviour
+    {
+        T[] enemies = FindObjectsByType<T>(FindObjectsSortMode.None);
+        foreach (T enemy in enemies)
+        {
+            if (enemy != null && Vector2.Distance(transform.position, enemy.transform.position) <= meleeRadius)
+            {
+                SpawnExplosionEffect(enemy.transform.position);
+                damageAction(enemy);
+            }
+        }
     }
 
     private float GetFacingAngle()

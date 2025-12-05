@@ -18,8 +18,10 @@ public class Wheeler : EnemyBaseBehavior
     
     [Header("References")]
     private Animator anim;
+    private SpriteRenderer spriteRenderer;
     
     // --- Private State Variables ---
+    private bool isFacingRight = true; // Tracks sprite facing direction (starts facing right)
     private enum WheelerState
     {
         Hiding,
@@ -34,10 +36,11 @@ public class Wheeler : EnemyBaseBehavior
     private bool isPlayerScared = false;
     
     // --- Initialization ---
-    void Start()
+    new void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         anim = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         
         // Freeze rotation to prevent sprite from rotating
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
@@ -193,6 +196,9 @@ public class Wheeler : EnemyBaseBehavior
         Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
         moveDirection = directionToPlayer;
         
+        // Flip sprite to face player
+        FlipToFacePlayer();
+        
         // Use fast chase speed
         float desiredSpeed = chaseSpeed;
         base.ApplyAcceleration(desiredSpeed);
@@ -202,6 +208,26 @@ public class Wheeler : EnemyBaseBehavior
         
         // Clamp position to movement bounds to avoid hitting walls
         transform.position = ClampToBounds(transform.position);
+    }
+    
+    void FlipToFacePlayer()
+    {
+        if (player == null || spriteRenderer == null) return;
+        
+        // Determine if player is to the right or left
+        bool playerIsRight = player.transform.position.x > transform.position.x;
+        
+        // Flip sprite if needed
+        if (playerIsRight && !isFacingRight)
+        {
+            spriteRenderer.flipX = false;
+            isFacingRight = true;
+        }
+        else if (!playerIsRight && isFacingRight)
+        {
+            spriteRenderer.flipX = true;
+            isFacingRight = false;
+        }
     }
     
     // Override movement to prevent rotation

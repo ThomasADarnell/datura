@@ -789,7 +789,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Flashlight",
+                    "name": "Item",
                     "type": "Button",
                     "id": "d65f5f72-f611-403d-91cb-36d2567c3e65",
                     "expectedControlType": "",
@@ -963,7 +963,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Flashlight",
+                    "action": "Item",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "277f7b03-0f3f-4c5e-b703-dec5cf40c873",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Item",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

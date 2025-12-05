@@ -58,18 +58,10 @@ public class Grasshopper : EnemyBaseBehavior
         }
     }
 
-    // NEW: Handle taking damage from external sources (like player attacks/bullets)
+    // OnTriggerEnter2D is handled by base class for player contact damage
     private new void OnTriggerEnter2D(Collider2D other)
     {
         base.OnTriggerEnter2D(other);
-
-        // Ensure this doesn't interfere with the base class's OnTriggerEnter2D (Player contact)
-        if (other.CompareTag("Attack"))
-        {
-            // Assuming the attack object has a component/script (like 'DamageSource') 
-            // that defines the damage value. For simplicity, we'll hardcode 1 damage here.
-            TakeDamage(1);
-        }
     }
 
     private IEnumerator PerformJumpArc()

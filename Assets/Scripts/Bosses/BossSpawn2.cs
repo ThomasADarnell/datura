@@ -31,7 +31,7 @@ public class BossSpawn2 : MonoBehaviour
     private GameObject spawnedBoss;
     private GameObject evilRock;
     private SpriteRenderer rockSpriteRenderer;
-    private Collider2D rockCollider;
+    private BoxCollider2D rockCollider;
     
     void Start()
     {
@@ -61,18 +61,16 @@ public class BossSpawn2 : MonoBehaviour
         // Try to find the evil rock object - first check if assigned in inspector
         if (evilRockObject == null)
         {
-            Debug.Log($"[{gameObject.name}] Rock not assigned in inspector, searching by name...");
-            evilRock = GameObject.Find("evilassrock");
+            Debug.Log($"[{gameObject.name}] Rock not assigned in inspector, searching by tag...");
+            evilRock = GameObject.FindGameObjectWithTag("evilassrock");
             
             if (evilRock == null)
             {
-                // Try with different capitalization
-                evilRock = GameObject.Find("EvilAssRock");
-                
-                if (evilRock == null)
-                {
-                    evilRock = GameObject.Find("Evilassrock");
-                }
+                Debug.LogError($"[{gameObject.name}] Could not find rock with tag 'evilassrock'!");
+            }
+            else
+            {
+                Debug.Log($"[{gameObject.name}] Found rock by tag: {evilRock.name}");
             }
         }
         else
@@ -84,7 +82,7 @@ public class BossSpawn2 : MonoBehaviour
         if (evilRock != null)
         {
             rockSpriteRenderer = evilRock.GetComponent<SpriteRenderer>();
-            rockCollider = evilRock.GetComponent<Collider2D>();
+            rockCollider = evilRock.GetComponent<BoxCollider2D>();
             
             Debug.Log($"[{gameObject.name}] Found rock: {evilRock.name}, SpriteRenderer: {rockSpriteRenderer != null}, Collider: {rockCollider != null}");
             
